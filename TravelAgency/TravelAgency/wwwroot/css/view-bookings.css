@@ -1,0 +1,56 @@
+/* view-bookings.css */
+
+.container {
+    margin-top: 50px;
+}
+
+.row {
+    display: flex;
+}
+
+.nav-links {
+    flex: 0 0 200px; /* Set a fixed width for the navigation links */
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 20px;
+    margin-right: 20px; /* Add margin to separate from the table */
+}
+
+.nav-links .btn {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.view-bookings {
+    flex: 1; /* Allow the table to take up remaining space */
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+}
+
+.table th,
+.table td {
+    padding: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    text-align: left;
+}
+
+.table td {
+    text-align: left;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.table tbody tr:hover {
+    background-color: #e9ecef;
+}

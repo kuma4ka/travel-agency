@@ -1,0 +1,129 @@
+@using Microsoft.AspNetCore.Identity
+@using TravelAgency.Models.UserRelated
+@inject SignInManager<AccountModel> SignInManager
+@inject UserManager<AccountModel> UserManager
+@model TravelAgency.Models.Admin.AdminPanelViewModel
+
+@{
+var currentUser = await UserManager.GetUserAsync(User);
+
+if (currentUser!.Role == TravelAgencyWeb.Utils.Enumerations.UserRole.Admin)
+{
+<link rel="stylesheet" href="~/css/admin-panel.css" />
+    
+<div class="container">
+    <div class="row">
+        <div class="col-md-2 offset-md-2">
+            <div class="nav-links">
+                <div class="mb-2">
+                    <a class="btn btn-primary" asp-controller="Account" asp-action="ViewProfile">Profile</a>
+                </div>
+                <div class="mb-2">
+                    <a class="btn btn-primary" asp-controller="Account" asp-action="ChangePassword">Change Password</a>
+                </div>
+                <div class="mb-2">
+                    <a class="btn btn-primary" asp-controller="Admin" asp-action="AdminPanel">Admin Panel</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2>Admin Panel</h2>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users" aria-selected="true">Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="flights-tab" data-toggle="tab" href="#flights" role="tab" aria-controls="flights" aria-selected="false">Flights</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="users" role="tabpanel" aria-labelledby="users-tab">
+                    <h3>User Management</h3>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var user in Model.AccModels)
+                        {
+                        <tr data-userid="@user.Id">
+                            <td><span class="editableUser" data-field="Name">@user.FirstName</span></td>
+                            <td><span class="editableUser" data-field="Name">@user.LastName</span></td>
+                            <td><span class="editableUser" data-field="Email">@user.Email</span></td>
+                            <td><span class="editableUser" data-field="PhoneNumber">@user.PhoneNumber</span></td>
+                            <td><span class="editableUser" data-field="Role">@user.Role</span></td>
+                        </tr>
+                        }
+                        </tbody>
+                    </table>
+                    <a asp-controller="Admin" asp-action="AddUser">Add new user</a>
+                </div>
+                <div class="tab-pane fade" id="flights" role="tabpanel" aria-labelledby="flights-tab">
+                    <h3>Flight Management</h3>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Departure City</th>
+                            <th>Destination City</th>
+                            <th>Departure Time</th>
+                            <th>Arrival Time</th>
+                            <th>Price</th>
+                            <th>Is Available</th>
+                            <th>Image URL</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var flight in Model.FlightModels)
+                        {
+                        <tr data-flightId="@flight.FlightId">
+                            <td>@flight.FlightId</td>
+                            <td><span class="editableFlight" data-field="DepartureCity">@flight.DepartureCity</span></td>
+                            <td><span class="editableFlight" data-field="DestinationCity">@flight.DestinationCity</span></td>
+                            <td><span class="editableFlight" data-field="DepartureTime">@flight.DepartureTime.ToShortDateString()</span></td>
+                            <td><span class="editableFlight" data-field="ArrivalTime">@flight.ArrivalTime.ToShortDateString()</span></td>
+                            <td><span class="editableFlight" data-field="Price"><text>$</text>@flight.Price</span></td>
+                            <td><span class="editableFlight" data-field="IsAvailable">@(flight.IsAvailable ? "Yes" : "No")</span></td>
+                            <td><span class="editableFlight" data-field="ImageUrl">@flight.ImageUrl</span></td>
+                            <td>
+                                <span class="editableFlight" data-field="Description">
+                                    <span class="details" data-toggle="tooltip" title="@flight.Description">
+                                        @if (flight.Description.Length > 30)
+                                        {
+                                            @flight.Description.Substring(0, 30) <text>...</text>
+                                        }
+                                        else
+                                        {
+                                            @flight.Description
+                                        }
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+                        }
+                        </tbody>
+                    </table>
+                    <a asp-controller="Admin" asp-action="AddFlight">Add new flight.</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+}
+
+@section scripts {
+    <script>
+        $('#myTab a').on('click', function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+    </script>
+}
