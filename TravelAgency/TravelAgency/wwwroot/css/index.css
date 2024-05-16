@@ -1,0 +1,250 @@
+/* index.css */
+
+h1 {
+    margin-top: 10px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+/* CSS for header section */
+header {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    text-align: center;
+}
+
+/* CSS for form style */
+.form-style {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    justify-content: space-between;
+}
+
+.form-control,
+input[type="date"] {
+    height: 50px;
+    width: calc(20% - 5px); /* Adjust the width as needed */
+    margin-right: 5px;
+}
+
+/* CSS for labels */
+label {
+    display: block; /* Ensure labels are displayed as block elements */
+    margin-bottom: 5px; /* Add some space between labels and inputs */
+}
+
+/* Fix input width for date input */
+#DepartureDate {
+    width: calc(100% - 22px); /* Adjust width to fill container, considering padding */
+}
+
+#DepartureDate:hover {
+    cursor: pointer;
+}
+
+/* CSS for search section */
+.search-section-centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.search-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #F5F5F5;
+    margin-bottom: 30px;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add box shadow */
+    width: 825px;
+}
+
+.search-section h2 {
+    margin: 20px 0;
+}
+
+.search-section input[type="text"],
+.search-section input[type="date"],
+.search-section input[type="number"],
+.search-section select {
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    min-width: 165px;
+    color: darkgray;
+}
+
+.search-section button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px 20px; /* Add padding */
+    margin-top: 13px;
+    border-radius: 10px; /* Add border radius */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.search-section button:hover {
+    background-color: #45a049; /* Change background color on hover */
+}
+
+.search-section label {
+    font-weight: bold; /* Make labels bold */
+}
+
+.search-section .search-section-element {
+    margin-bottom: 20px; /* Add margin bottom */
+    display: flex; /* Use flexbox */
+    flex-direction: column;
+}
+
+.search-section .search-section-element input,
+.search-section .search-section-element select {
+    flex: 1; /* Expand input and select to fill remaining space */
+}
+
+.search-section .btn-element button {
+    width: 100%; /* Set button width to 100% */
+}
+
+/* Flex container for the content */
+.content {
+    display: flex;
+    justify-content: space-between; /* Separate the sections with space */
+}
+
+/* CSS for popular destinations and top airlines sections */
+.popular-destinations,
+.top-airlines {
+    background-color: #F5F5F5;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    flex: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Add box shadow */
+}
+
+.popular-destinations h2,
+.top-airlines h2 {
+    margin-bottom: 10px;
+}
+
+/* CSS for top airlines section */
+.top-airlines {
+    margin-left: 30px;
+    width: 20%; /* Adjust width to 20% */
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    padding: 15px; /* Adjust padding for better spacing */
+}
+
+.top-airlines ul {
+    list-style-type: none; /* Remove bullets */
+    padding: 0; /* Remove default padding */
+}
+
+.top-airlines ul li {
+    margin-bottom: 8px; /* Adjust spacing between list items */
+    font-size: 16px; /* Increase font size */
+    color: #333; /* Change text color */
+}
+
+.top-airlines ul li:before {
+    content: "🛫"; /* Use a custom bullet point */
+    margin-right: 8px; /* Adjust spacing between bullet and text */
+    color: #4CAF50; /* Change bullet color */
+    font-weight: bold; /* Make bullet bold */
+    font-size: 20px; /* Increase font size */
+}
+
+.top-airlines h2 {
+    margin-bottom: 25px; /* Adjust spacing below heading */
+    font-size: 18px; /* Increase font size */
+    color: #555; /* Change heading color */
+    border-bottom: 1px solid #ccc; /* Add a bottom border for separation */
+    padding-bottom: 10px; /* Adjust padding for better spacing */
+}
+
+.top-airlines ul li:hover {
+    background-color: #f0f0f0; /* Change background color on hover */
+    border-radius: 3px; /* Add border radius on hover */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+/* CSS for popular destinations section */
+.popular-destinations {
+    background-color: #F5F5F5; /* Light gray background */
+    padding: 20px; /* Padding */
+    margin-bottom: 20px; /* Margin bottom */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow */
+    width: 80%;
+}
+
+.popular-destinations h2 {
+    margin-bottom: 10px; /* Margin bottom for heading */
+    font-size: 20px; /* Increase font size */
+    color: #555; /* Heading color */
+    border-bottom: 1px solid #ccc; /* Bottom border */
+    padding-bottom: 10px; /* Padding bottom for heading */
+}
+
+.popular-destinations .destination {
+    flex: 0 0 calc(33.33% - 10px); /* Adjust width based on the number of items per row */
+    margin-bottom: 20px; /* Margin bottom */
+    text-align: center; /* Center align */
+    background-color: #fff; /* White background */
+    border-radius: 8px; /* Rounded corners */
+    padding: 15px; /* Padding */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow */
+    transition: transform 0.3s ease; /* Smooth transition */
+}
+
+.popular-destinations .destination:hover {
+    transform: translateY(-5px); /* Move up on hover */
+}
+
+.popular-destinations .destination img {
+    width: 100%; /* Full width image */
+    border-radius: 5px; /* Rounded corners for image */
+}
+
+.popular-destinations .destination h3 {
+    margin-top: 10px; /* Margin top for heading */
+    font-size: 16px; /* Font size */
+    color: #333; /* Text color */
+}
+
+.popular-destinations .destination-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+/* CSS for destinations */
+.destination-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.destination {
+    flex: 0 0 calc(33.33% - 10px); /* Adjust width based on the number of items per row */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.destination img {
+    width: 100%;
+    border-radius: 5px;
+}
+
+.destination h3 {
+    margin-top: 10px;
+}
+
+

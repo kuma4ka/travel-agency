@@ -1,0 +1,413 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\TravelAgency.bundle.scp.css",
+      "PackagePath": "staticwebassets\\TravelAgency.bundle.scp.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\add-flight.css",
+      "PackagePath": "staticwebassets\\css\\add-flight.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\add-user.css",
+      "PackagePath": "staticwebassets\\css\\add-user.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\admin-panel.css",
+      "PackagePath": "staticwebassets\\css\\admin-panel.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\booking.css",
+      "PackagePath": "staticwebassets\\css\\booking.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\change-password.css",
+      "PackagePath": "staticwebassets\\css\\change-password.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\index.css",
+      "PackagePath": "staticwebassets\\css\\index.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\layout.css",
+      "PackagePath": "staticwebassets\\css\\layout.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\login.css",
+      "PackagePath": "staticwebassets\\css\\login.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\registration.css",
+      "PackagePath": "staticwebassets\\css\\registration.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\search-result.css",
+      "PackagePath": "staticwebassets\\css\\search-result.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\site.css",
+      "PackagePath": "staticwebassets\\css\\site.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\view-bookings.css",
+      "PackagePath": "staticwebassets\\css\\view-bookings.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\view-profile.css",
+      "PackagePath": "staticwebassets\\css\\view-profile.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\favicon.ico",
+      "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\js\\index.js",
+      "PackagePath": "staticwebassets\\js\\index.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\js\\jquery-3.7.1.min.js",
+      "PackagePath": "staticwebassets\\js\\jquery-3.7.1.min.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\js\\jquery.mask.min.js",
+      "PackagePath": "staticwebassets\\js\\jquery.mask.min.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\js\\site.js",
+      "PackagePath": "staticwebassets\\js\\site.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\LICENSE",
+      "PackagePath": "staticwebassets\\lib\\bootstrap"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Amsterdam.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Amsterdam.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Bangkok.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Bangkok.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Beijing.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Beijing.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Berlin.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Berlin.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Chicago.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Chicago.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Dubai.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Dubai.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\HongKong.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\HongKong.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Istanbul.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Istanbul.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Kyiv.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Kyiv.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\London.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\London.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\LosAngeles.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\LosAngeles.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Madrid.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Madrid.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\NewYork.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\NewYork.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Paris.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Paris.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Rome.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Rome.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Seoul.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Seoul.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Singapore.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Singapore.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Sydney.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Sydney.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Tokyo.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Tokyo.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Toronto.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Toronto.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\Warsaw.jpg",
+      "PackagePath": "staticwebassets\\lib\\images\\Warsaw.jpg"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\images\\logo.png",
+      "PackagePath": "staticwebassets\\lib\\images\\logo.png"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\jquery-validation\\LICENSE.md",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\LICENSE.md"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.min.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.min.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\jquery\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\lib\\jquery\\LICENSE.txt"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\jquery\\dist\\jquery.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.js"
+    },
+    {
+      "Id": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.TravelAgency.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.TravelAgency.props",
+      "PackagePath": "build\\TravelAgency.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.TravelAgency.props",
+      "PackagePath": "buildMultiTargeting\\TravelAgency.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.TravelAgency.props",
+      "PackagePath": "buildTransitive\\TravelAgency.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

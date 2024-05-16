@@ -1,0 +1,64 @@
+@using System.Text.Json
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model TravelAgencyWeb.Models.Search.SearchResultModel
+
+@{
+ViewData["Title"] = "Search Results";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Result</title>
+    <link rel="stylesheet" href="~/css/search-result.css" asp-append-version="true"/>
+</head>
+<body>
+
+<h1>Search Results</h1>
+<div class="table-container">
+    @if (Model.Flights.Any())
+    {
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Departure City</th>
+                <th>Destination City</th>
+                <th>Departure Date</th>
+                <th>Arrival Date</th>
+                <th>Price</th>
+                <th class="description-cell">Description</th>
+                <th>Image</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var flight in Model.Flights)
+            {
+                <tr>
+                    <td>@flight.DepartureCity</td>
+                    <td>@flight.DestinationCity</td>
+                    <td>@flight.DepartureTime.ToString("dd/MM/yyyy")</td>
+                    <td>@flight.ArrivalTime.ToString("dd/MM/yyyy")</td>
+                    <td><text>$</text>@flight.Price </td>
+                    <td class="description-cell">@flight.Description</td>
+                    <td><img src="@flight.ImageUrl" alt="Flight Image" style="max-width: 100px; max-height: 100px;" loading="lazy"/></td>
+                    <td>
+                        <form method="post" asp-action="ConfirmBooking" asp-controller="Booking">
+                            <input type="hidden" name="flightJson" value="@JsonSerializer.Serialize(flight)" />
+                            <button type="submit" class="book-button">Book</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No flights available matching your search criteria.</p>
+    }
+</div>
+
+</body>
+</html>

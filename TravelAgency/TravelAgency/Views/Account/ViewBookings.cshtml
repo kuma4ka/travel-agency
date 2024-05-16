@@ -1,0 +1,71 @@
+@using Microsoft.AspNetCore.Identity
+@using TravelAgency.Models.UserRelated
+@inject SignInManager<AccountModel> SignInManager
+@inject UserManager<AccountModel> UserManager
+@model List<TravelAgency.Models.BookingModel>
+
+@{
+ViewData["Title"] = "View Bookings";
+}
+
+<link rel="stylesheet" href="~/css/view-bookings.css" asp-append-version="true"/>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-2 offset-md-2">
+            <div class="nav-links">
+                <div class="mb-2">
+                    <a class="btn btn-primary" asp-controller="Account" asp-action="ViewProfile">Profile</a>
+                </div>
+                <div class="mb-2">
+                    <a class="btn btn-primary" asp-controller="Account" asp-action="ChangePassword">Change Password</a>
+                </div>
+                <div class="mb-2">
+                    <a class="btn btn-primary" asp-controller="Account" asp-action="ViewBookings">Bookings</a>
+                </div>
+                @{
+                var user = await UserManager.GetUserAsync(User);
+                if (user!.Role == TravelAgencyWeb.Utils.Enumerations.UserRole.Admin)
+                {
+                <div>
+                    <a class="btn btn-primary" asp-controller="Admin" asp-action="AdminPanel">Admin Panel</a>
+                </div>
+                }
+                }
+            </div>
+        </div>
+
+        <div class="view-bookings">
+            <h2>View Bookings</h2>
+
+            @if (Model.Any())
+            {
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Flight</th>
+                    <th>Booking Date</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var booking in Model)
+                {
+                <tr>
+                    <td>@booking.BookingId</td>
+                    <td>@booking.DepartureCity to @booking.DestinationCity</td>
+                    <td>@booking.BookingDate.ToShortDateString()</td>
+                    <td>@booking.Status</td>
+                </tr>
+                }
+                </tbody>
+            </table>
+            }
+            else
+            {
+            <p>No bookings found.</p>
+            }
+        </div>
+    </div>
+</div>

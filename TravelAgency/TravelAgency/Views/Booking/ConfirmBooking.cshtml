@@ -1,0 +1,38 @@
+@model TravelAgency.Models.BookingModel
+
+@{
+    ViewData["Title"] = "Booking Confirmation";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Confirmation</title>
+    <link rel="stylesheet" href="~/css/booking.css" asp-append-version="true"/>
+</head>
+<body>
+
+<h2>Booking Confirmed</h2>
+
+<div class="booking-details">
+    <h3>Flight Details</h3>
+    <p><strong>Flight ID:</strong> @Model.FlightId</p>
+    <p><strong>Departure City:</strong> @Model.DepartureCity</p>
+    <p><strong>Destination City:</strong> @Model.DestinationCity</p>
+    <p><strong>Departure Time:</strong> @Model.DepartureTime.ToString("dd/MM/yyyy HH:mm")</p>
+    <p><strong>Price:</strong><text>$</text>@Model.Price</p>
+    <p><strong>Booked at:</strong> @Model.BookingDate</p>
+</div>
+
+<div class="booking-details">
+    <h3>User Details</h3>
+    <p><strong>User ID:</strong> @Model.FlightId</p>
+    <p><strong>First Name:</strong> @Model.UserFirstName</p>
+    <p><strong>Last Name:</strong> @Model.UserLastName</p>
+    <p><strong>Email:</strong> @Model.UserEmail</p>
+    <p><strong>Phone:</strong> @Model.UserPhoneNumber</p>
+</div>
+</body>
+</html>

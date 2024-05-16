@@ -1,0 +1,34 @@
+<changelist name="Uncommitted_changes_before_Checkout_at_16_05_2024_16_39_[Changes]1" date="1715866786800" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/.idea.TravelAgency/.idea/shelf/Uncommitted_changes_before_Checkout_at_16_05_2024_16_39_[Changes]1/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 16.05.2024 16:39 [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value="TravelAgency/bin/Debug/net8.0/TravelAgency.exe" />
+    <option name="AFTER_PATH" value="TravelAgency/bin/Debug/net8.0/TravelAgency.exe" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/.idea.TravelAgency/.idea/shelf/Uncommitted_changes_before_Checkout_at_16_05_2024_16_39_[Changes]1/TravelAgency.exe" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="TravelAgency/obj/Debug/net8.0/ref/TravelAgency.dll" />
+    <option name="AFTER_PATH" value="TravelAgency/obj/Debug/net8.0/ref/TravelAgency.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/.idea.TravelAgency/.idea/shelf/Uncommitted_changes_before_Checkout_at_16_05_2024_16_39_[Changes]1/TravelAgency.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="TravelAgency/bin/Debug/net8.0/TravelAgency.pdb" />
+    <option name="AFTER_PATH" value="TravelAgency/bin/Debug/net8.0/TravelAgency.pdb" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/.idea.TravelAgency/.idea/shelf/Uncommitted_changes_before_Checkout_at_16_05_2024_16_39_[Changes]1/TravelAgency.pdb" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="TravelAgency/obj/Debug/net8.0/TravelAgency.csproj.CoreCompileInputs.cache" />
+    <option name="AFTER_PATH" value="TravelAgency/obj/Debug/net8.0/TravelAgency.csproj.CoreCompileInputs.cache" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/.idea.TravelAgency/.idea/shelf/Uncommitted_changes_before_Checkout_at_16_05_2024_16_39_[Changes]1/TravelAgency.csproj.CoreCompileInputs.cache" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="TravelAgency/obj/Debug/net8.0/TravelAgency.AssemblyInfoInputs.cache" />
+    <option name="AFTER_PATH" value="TravelAgency/obj/Debug/net8.0/TravelAgency.AssemblyInfoInputs.cache" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/.idea.TravelAgency/.idea/shelf/Uncommitted_changes_before_Checkout_at_16_05_2024_16_39_[Changes]1/TravelAgency.AssemblyInfoInputs.cache" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="TravelAgency/obj/Debug/net8.0/apphost.exe" />
+    <option name="AFTER_PATH" value="TravelAgency/obj/Debug/net8.0/apphost.exe" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/.idea.TravelAgency/.idea/shelf/Uncommitted_changes_before_Checkout_at_16_05_2024_16_39_[Changes]1/apphost.exe" />
+  </binary>
+</changelist>

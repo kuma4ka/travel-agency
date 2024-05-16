@@ -1,0 +1,475 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\models\\flightmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\models\\flightmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\views\\account\\viewbookings.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\views\\account\\viewbookings.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\views\\admin\\addflight.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\views\\admin\\addflight.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\views\\search\\searchresult.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\views\\search\\searchresult.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\wwwroot\\css\\index.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\wwwroot\\css\\index.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\views\\home\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\views\\home\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\views\\account\\changepassword.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\views\\account\\changepassword.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\views\\shared\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\views\\shared\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\views\\shared\\_validationscriptspartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\views\\shared\\_validationscriptspartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\controllers\\bookingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\controllers\\bookingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\models\\bookingmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\models\\bookingmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\views\\booking\\confirmbooking.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\views\\booking\\confirmbooking.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\models\\search\\searchviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\models\\search\\searchviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|d:\\pet-projects\\travel-agency\\travelagency\\travelagency\\controllers\\searchcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}|TravelAgency\\TravelAgency.csproj|solutionrelative:travelagency\\controllers\\searchcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 11,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0ad07096-bba9-4900-a651-0598d26f6d24}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{e1b7d1f8-9b3c-49b1-8f4f-bfc63a88835d}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AddFlight.cshtml",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Admin\\AddFlight.cshtml",
+              "RelativeDocumentMoniker": "TravelAgency\\Views\\Admin\\AddFlight.cshtml",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Admin\\AddFlight.cshtml",
+              "RelativeToolTip": "TravelAgency\\Views\\Admin\\AddFlight.cshtml",
+              "ViewState": "AQIAABIAAAAAAAAAAAAAACYAAABYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-05-14T18:00:27.406Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "index.css",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\index.css",
+              "RelativeDocumentMoniker": "TravelAgency\\wwwroot\\css\\index.css",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\wwwroot\\css\\index.css",
+              "RelativeToolTip": "TravelAgency\\wwwroot\\css\\index.css",
+              "ViewState": "AQIAAIwAAAAAAAAAAAAmwK8AAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2024-05-14T16:00:07.592Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "TravelAgency\\Views\\Home\\Index.cshtml",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "TravelAgency\\Views\\Home\\Index.cshtml",
+              "ViewState": "AQIAAA8AAAAAAAAAAAAAACkAAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-05-14T14:46:57.733Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "SearchResult.cshtml",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Search\\SearchResult.cshtml",
+              "RelativeDocumentMoniker": "TravelAgency\\Views\\Search\\SearchResult.cshtml",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Search\\SearchResult.cshtml",
+              "RelativeToolTip": "TravelAgency\\Views\\Search\\SearchResult.cshtml",
+              "ViewState": "AQIAABIAAAAAAAAAAAAAADEAAAAfAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-05-14T15:02:45.919Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ViewBookings.cshtml",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Account\\ViewBookings.cshtml",
+              "RelativeDocumentMoniker": "TravelAgency\\Views\\Account\\ViewBookings.cshtml",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Account\\ViewBookings.cshtml",
+              "RelativeToolTip": "TravelAgency\\Views\\Account\\ViewBookings.cshtml",
+              "ViewState": "AQIAADwAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-05-14T16:12:11.617Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "TravelAgency\\Controllers\\AccountController.cs",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "TravelAgency\\Controllers\\AccountController.cs",
+              "ViewState": "AQIAAJ8AAAAAAAAAAAAqwN4AAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-14T15:05:21.675Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AdminController.cs",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Controllers\\AdminController.cs",
+              "RelativeDocumentMoniker": "TravelAgency\\Controllers\\AdminController.cs",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Controllers\\AdminController.cs",
+              "RelativeToolTip": "TravelAgency\\Controllers\\AdminController.cs",
+              "ViewState": "AQIAANcAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-14T15:05:19.501Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "FlightModel.cs",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Models\\FlightModel.cs",
+              "RelativeDocumentMoniker": "TravelAgency\\Models\\FlightModel.cs",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Models\\FlightModel.cs",
+              "RelativeToolTip": "TravelAgency\\Models\\FlightModel.cs",
+              "ViewState": "AQIAAAcAAAAAAAAAAADwvyEAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-14T14:19:09.543Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "TravelAgency\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "TravelAgency\\Data\\ApplicationDbContext.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-14T14:16:31.475Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "TravelAgency\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "TravelAgency\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAADAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-05-14T15:57:49.753Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Error.cshtml",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Shared\\Error.cshtml",
+              "RelativeDocumentMoniker": "TravelAgency\\Views\\Shared\\Error.cshtml",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Shared\\Error.cshtml",
+              "RelativeToolTip": "TravelAgency\\Views\\Shared\\Error.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-05-14T15:58:34.845Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ChangePassword.cshtml",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Account\\ChangePassword.cshtml",
+              "RelativeDocumentMoniker": "TravelAgency\\Views\\Account\\ChangePassword.cshtml",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Account\\ChangePassword.cshtml",
+              "RelativeToolTip": "TravelAgency\\Views\\Account\\ChangePassword.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAHAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-05-14T16:06:52.972Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "TravelAgency\\Controllers\\HomeController.cs",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "TravelAgency\\Controllers\\HomeController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABgAAABJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-14T14:57:16.28Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Privacy.cshtml",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Home\\Privacy.cshtml",
+              "RelativeDocumentMoniker": "TravelAgency\\Views\\Home\\Privacy.cshtml",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Home\\Privacy.cshtml",
+              "RelativeToolTip": "TravelAgency\\Views\\Home\\Privacy.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-05-14T16:51:07.54Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "_ValidationScriptsPartial.cshtml",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "RelativeDocumentMoniker": "TravelAgency\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "RelativeToolTip": "TravelAgency\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-05-14T15:58:33.08Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "_LoginPartial.cshtml",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Shared\\_LoginPartial.cshtml",
+              "RelativeDocumentMoniker": "TravelAgency\\Views\\Shared\\_LoginPartial.cshtml",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Shared\\_LoginPartial.cshtml",
+              "RelativeToolTip": "TravelAgency\\Views\\Shared\\_LoginPartial.cshtml",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-05-14T15:57:53.045Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "_ViewImports.cshtml",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\_ViewImports.cshtml",
+              "RelativeDocumentMoniker": "TravelAgency\\Views\\_ViewImports.cshtml",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\_ViewImports.cshtml",
+              "RelativeToolTip": "TravelAgency\\Views\\_ViewImports.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-05-14T15:57:03.824Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "TravelAgency\\appsettings.Development.json",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\appsettings.Development.json",
+              "RelativeToolTip": "TravelAgency\\appsettings.Development.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-05-14T15:49:35.42Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\appsettings.json",
+              "RelativeDocumentMoniker": "TravelAgency\\appsettings.json",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\appsettings.json",
+              "RelativeToolTip": "TravelAgency\\appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-05-14T15:42:14.205Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "BookingController.cs",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Controllers\\BookingController.cs",
+              "RelativeDocumentMoniker": "TravelAgency\\Controllers\\BookingController.cs",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Controllers\\BookingController.cs",
+              "RelativeToolTip": "TravelAgency\\Controllers\\BookingController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAABnAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-14T15:04:14.363Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Program.cs",
+              "RelativeDocumentMoniker": "TravelAgency\\Program.cs",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Program.cs",
+              "RelativeToolTip": "TravelAgency\\Program.cs",
+              "ViewState": "AQIAACcAAAAAAAAAAAAAAAgAAAAhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-14T14:43:07.983Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "BookingModel.cs",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Models\\BookingModel.cs",
+              "RelativeDocumentMoniker": "TravelAgency\\Models\\BookingModel.cs",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Models\\BookingModel.cs",
+              "RelativeToolTip": "TravelAgency\\Models\\BookingModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAADAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-14T14:36:31.206Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "ConfirmBooking.cshtml",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Booking\\ConfirmBooking.cshtml",
+              "RelativeDocumentMoniker": "TravelAgency\\Views\\Booking\\ConfirmBooking.cshtml",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Views\\Booking\\ConfirmBooking.cshtml",
+              "RelativeToolTip": "TravelAgency\\Views\\Booking\\ConfirmBooking.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-05-14T15:02:40.866Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "SearchViewModel.cs",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Models\\Search\\SearchViewModel.cs",
+              "RelativeDocumentMoniker": "TravelAgency\\Models\\Search\\SearchViewModel.cs",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Models\\Search\\SearchViewModel.cs",
+              "RelativeToolTip": "TravelAgency\\Models\\Search\\SearchViewModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-14T15:00:37.93Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "SearchController.cs",
+              "DocumentMoniker": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Controllers\\SearchController.cs",
+              "RelativeDocumentMoniker": "TravelAgency\\Controllers\\SearchController.cs",
+              "ToolTip": "D:\\Pet-Projects\\travel-agency\\TravelAgency\\TravelAgency\\Controllers\\SearchController.cs",
+              "RelativeToolTip": "TravelAgency\\Controllers\\SearchController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-14T14:57:54.618Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 143,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

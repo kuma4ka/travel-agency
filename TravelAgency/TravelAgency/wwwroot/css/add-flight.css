@@ -1,0 +1,114 @@
+/* Custom CSS styles for Add Flight view */
+
+.container-add-flight {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.container-add-flight h2 {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.container-add-flight .form-group {
+    margin-bottom: 20px;
+}
+
+.container-add-flight label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.container-add-flight input[type="text"],
+.container-add-flight input[type="email"],
+.container-add-flight input[type="password"],
+.container-add-flight input[type="checkbox"],
+.container-add-flight select {
+    width: 100%; /* Adjusted to account for padding */
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color:darkgray;
+}
+
+.container-add-flight input[type="date"]{
+    color:darkgray;
+}
+
+.container-add-flight input[type="checkbox"]{
+    cursor: pointer;
+    height: 3px;
+    width: 3px;
+}
+
+.container-add-flight .checkbox .form-check-label {
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+.container-add-flight .checkbox .form-check-input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Style the custom checkbox */
+.container-add-flight .checkbox .checkmark {
+    position: relative;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.container-add-flight .checkbox input[type="checkbox"]:checked + .checkmark:after {
+    content: "";
+    position: absolute;
+    display: block;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    border-radius: 1px;
+}
+
+.container-add-flight .btn-primary {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.container-add-flight .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.container-add-flight .text-danger {
+    font-size: 14px;
+}
+
+.div-button {
+    margin-top: 20px;
+}

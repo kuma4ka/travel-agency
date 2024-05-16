@@ -1,0 +1,108 @@
+﻿<!-- Index.cshtml -->
+@model TravelAgencyWeb.Models.Search.SearchViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome!</title>
+    <link rel="stylesheet" href="~/css/index.css" asp-append-version="true"/>
+    
+</head>
+<body>
+
+<h1>Discover your next adventure. Find unbeatable deals.</h1>
+
+
+<!-- Search Section -->
+<div class="search-section-centered">
+    <section class="search-section">
+        <h2>Find Your Flight</h2>
+        <form asp-controller="Home" asp-action="Search" method="post" class="form-style">
+            <div class="search-section-element">
+                <label for="DepartureCity">Departure City</label>
+                <select id="DepartureCity" name="DepartureCity" class="form-control" onchange="updateCitiesOptions('DepartureCity', 'ArrivalCity')">
+                    <option disabled selected>Departure City</option>
+                    @foreach (var city in Enum.GetValues(typeof(TravelAgencyWeb.Utils.Enumerations.Cities)))
+                    {
+                    <option value="@city">@city</option>
+                    }
+                </select>
+            </div>
+            <div class="search-section-element">
+                <label for="ArrivalCity">Destination City</label>
+                <select id="ArrivalCity" name="ArrivalCity" class="form-control" onchange="updateCitiesOptions('ArrivalCity', 'DepartureCity')">
+                    <option disabled selected>Destination City</option>
+                    @foreach (var city in Enum.GetValues(typeof(TravelAgencyWeb.Utils.Enumerations.Cities)))
+                    {
+                    <option value="@city">@city</option>
+                    }
+                </select>
+            </div>
+            <div class="search-section-element">
+                <label for="DepartureDate">Departure Date</label>
+                <input id="DepartureDate" type="date" name="DepartureDate" value="@Model.DepartureDate.ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")">
+            </div>
+            <div class="search-section-element">
+                <label id="Quantity" for="Quantity">Quantity</label>
+                <input type="number" name="Quantity" placeholder="Quantity of Persons" value="1" min="1" max="9">
+            </div>
+            <div class="search-section-element btn-element">
+                <button type="submit">Search</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+<section class="content">
+    <section class="popular-destinations">
+        <h2>Popular Destinations</h2>
+        <div class="destination-grid">
+            <div class="destination">
+                <img src="~/lib/images/Amsterdam.jpg" alt="Amsterdam">
+                <h3>Amsterdam</h3>
+            </div>
+            <div class="destination">
+                <img src="~/lib/images/NewYork.jpg" alt="NewYork">
+                <h3>New York</h3>
+            </div>
+            <div class="destination">
+                <img src="~/lib/images/Madrid.jpg" alt="Madrid">
+                <h3>Madrid</h3>
+            </div>
+            <div class="destination">
+                <img src="~/lib/images/London.jpg" alt="London">
+                <h3>London</h3>
+            </div>
+            <div class="destination">
+                <img src="~/lib/images/Kyiv.jpg" alt="Kyiv">
+                <h3>Kyiv</h3>
+            </div>
+            <div class="destination">
+                <img src="~/lib/images/Berlin.jpg" alt="Berlin">
+                <h3>Berlin</h3>
+            </div>
+        </div>
+    </section>
+    <section class="top-airlines">
+        <h2>Top 10 Airlines</h2>
+        <ul>
+            <li>Singapore Airlines</li>
+            <li>Qatar Airways</li>
+            <li>ANA All Nippon Airways</li>
+            <li>Emirates</li>
+            <li>Japan Airlines</li>
+            <li>Turkish Airlines</li>
+            <li>Air France</li>
+            <li>Cathay Pacific Airways</li>
+            <li>EVA Air</li>
+            <li>Korean  Air</li>
+        </ul>
+    </section>
+</section>
+
+</body>
+<script src="~/js/index.js"></script>
+
+</html>

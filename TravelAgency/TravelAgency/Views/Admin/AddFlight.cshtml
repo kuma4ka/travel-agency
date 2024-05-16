@@ -1,0 +1,97 @@
+@using Microsoft.AspNetCore.Identity
+@using TravelAgency.Models.UserRelated
+@inject UserManager<AccountModel> UserManager
+@{
+    ViewData["Title"] = "Add Flight";
+}
+
+@model FlightModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/add-flight.css" asp-append-version="true"/>
+</head>
+<body>
+
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+
+    if (currentUser!.Role == TravelAgencyWeb.Utils.Enumerations.UserRole.Admin)
+    {
+
+        <div class="container-add-flight">
+            <h2>@ViewData["Title"]</h2>
+            <form asp-controller="Admin" asp-action="AddFlight" method="post" class="form-horizontal" role="form">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label for="DepartureCity" class="control-label">Departure City</label>
+                    <select id="DepartureCity" name="DepartureCity" class="form-control" onchange="updateCitiesOptions('DepartureCity', 'ArrivalCity')">
+                        <option disabled selected>Select Departure City</option>
+                        @foreach (var city in Enum.GetValues(typeof(TravelAgencyWeb.Utils.Enumerations.Cities)))
+                        {
+                        <option value="@city">@city</option>
+                        }
+                    </select>
+                    <span asp-validation-for="DepartureCity" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="DestinationCity" class="control-label">Destination City</label>
+                    <select id="DestinationCity" name="DestinationCity" class="form-control" onchange="updateCitiesOptions('DestinationCity', 'DepartureCity')">
+                        <option disabled selected>Select Destination City</option>
+                        @foreach (var city in Enum.GetValues(typeof(TravelAgencyWeb.Utils.Enumerations.Cities)))
+                        {
+                        <option value="@city">@city</option>
+                        }
+                    </select>
+                    <span asp-validation-for="DestinationCity" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DepartureTime" class="control-label"></label>
+                    <input asp-for="DepartureTime" class="form-control" type="date" value="@Model.DepartureTime.Date.ToString("yyyy-MM-dd")"/>
+                    <span asp-validation-for="DepartureTime" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ArrivalTime" class="control-label"></label>
+                    <input asp-for="ArrivalTime" class="form-control" type="date" value="@Model.ArrivalTime.Date.ToString("yyyy-MM-dd")"/>
+                    <span asp-validation-for="ArrivalTime" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Price" class="control-label"></label>
+                    <input asp-for="Price" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IsAvailable" class="control-label"></label>
+                    <input asp-for="IsAvailable" class="form-check-input" />
+                    <span asp-validation-for="IsAvailable" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ImageUrl" class="control-label"></label>
+                    <input asp-for="ImageUrl" class="form-control" />
+                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-2">
+                    <label asp-for="Description" class="control-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="form-group div-button">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    }
+    else
+    {
+        <p>You do not have permission to access this page.</p>
+    }
+}
+
+</body>
+</html>
