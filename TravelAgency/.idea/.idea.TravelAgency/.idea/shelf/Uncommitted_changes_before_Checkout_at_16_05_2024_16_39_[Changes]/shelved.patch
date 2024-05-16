@@ -1,0 +1,1640 @@
+Index: TravelAgency/Controllers/SearchController.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using Microsoft.AspNetCore.Mvc;\r\nusing Microsoft.EntityFrameworkCore;\r\nusing TravelAgencyWeb.Data;\r\nusing TravelAgencyWeb.Models.Search;\r\n\r\nnamespace TravelAgencyWeb.Controllers\r\n{\r\n    public class SearchController(ApplicationDbContext context) : Controller\r\n    {\r\n        public async Task<IActionResult> SearchResult(SearchViewModel searchViewModel)\r\n        {\r\n            var matchingFlights = await context.Flights\r\n                .Where(f =>\r\n                    f.DepartureCity == searchViewModel.DepartureCity &&\r\n                    f.DestinationCity == searchViewModel.ArrivalCity &&\r\n                    f.DepartureTime == searchViewModel.DepartureDate)\r\n                .ToListAsync();\r\n\r\n            var searchResultModel = new SearchResultModel\r\n            {\r\n                Flights = matchingFlights\r\n            };\r\n\r\n            if (!ModelState.IsValid)\r\n            {\r\n                return View(searchResultModel);\r\n            }\r\n\r\n            return View(searchResultModel);\r\n        }\r\n        \r\n    }\r\n}\r\n
+===================================================================
+diff --git a/TravelAgency/Controllers/SearchController.cs b/TravelAgency/Controllers/SearchController.cs
+--- a/TravelAgency/Controllers/SearchController.cs	
++++ b/TravelAgency/Controllers/SearchController.cs	
+@@ -1,15 +1,24 @@
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
++using TravelAgency.Models.Search;
+ using TravelAgencyWeb.Data;
+-using TravelAgencyWeb.Models.Search;
++using TravelAgency.Utils.Abstract;
++using Microsoft.AspNetCore.Identity;
++using TravelAgency.Models.UserRelated;
+ 
+-namespace TravelAgencyWeb.Controllers
++namespace TravelAgency.Controllers
+ {
+-    public class SearchController(ApplicationDbContext context) : Controller
++    public class SearchController(UserManager<AccountModel> userManager, ApplicationDbContext context)
++        : BaseController(userManager, context)
+     {
+         public async Task<IActionResult> SearchResult(SearchViewModel searchViewModel)
+         {
+-            var matchingFlights = await context.Flights
++            if (!ModelState.IsValid)
++            {
++                return View(new SearchResultModel());
++            }
++
++            var matchingFlights = await Context.Flights
+                 .Where(f =>
+                     f.DepartureCity == searchViewModel.DepartureCity &&
+                     f.DestinationCity == searchViewModel.ArrivalCity &&
+@@ -21,13 +30,7 @@
+                 Flights = matchingFlights
+             };
+ 
+-            if (!ModelState.IsValid)
+-            {
+-                return View(searchResultModel);
+-            }
+-
+             return View(searchResultModel);
+         }
+-        
+     }
+-}
++}
+\ No newline at end of file
+Index: TravelAgency/Controllers/AccountController.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using Microsoft.AspNetCore.Authorization;\r\nusing Microsoft.AspNetCore.Identity;\r\nusing Microsoft.AspNetCore.Mvc;\r\nusing TravelAgency.Models.UserRelated;\r\nusing TravelAgencyWeb.Data;\r\nusing TravelAgencyWeb.Models;\r\nusing TravelAgencyWeb.Utils;\r\nusing TravelAgencyWeb.Utils.Interfaces;\r\n\r\nnamespace TravelAgencyWeb.Controllers\r\n{\r\n    public class AccountController : Controller, IAccount\r\n    {\r\n        private readonly UserManager<AccountModel> _userManager;\r\n        private readonly SignInManager<AccountModel> _signInManager;\r\n        private readonly ApplicationDbContext _context;\r\n        public delegate Task UserEventHandler(string userId, string message);\r\n        public event UserEventHandler UserEventOccurred;\r\n        \r\n        public AccountController(UserManager<AccountModel> userManager, SignInManager<AccountModel> signInManager, ApplicationDbContext context)\r\n        {\r\n            _userManager = userManager;\r\n            _signInManager = signInManager;\r\n            _context = context;\r\n            UserEventOccurred += async (userId, message) =>\r\n            {\r\n                TempData[\"UserNotification\"] = message;\r\n            };\r\n        }\r\n        \r\n        [HttpGet]\r\n        [AllowAnonymous]\r\n        public IActionResult Register()\r\n        {\r\n            return View();\r\n        }\r\n        \r\n        [HttpPost]\r\n        [AllowAnonymous]\r\n        [ValidateAntiForgeryToken]\r\n        public async Task<IActionResult> Register(RegisterViewModel model)\r\n        {\r\n            if (!ModelState.IsValid) return View(model);\r\n            \r\n            var existingUser = await FindBy.FindByEmailAsync(model.Email, _userManager);\r\n                \r\n            if (existingUser != null)\r\n            {\r\n                ModelState.AddModelError(string.Empty, \"This email is already in use!\");\r\n                return View(model);\r\n            }\r\n                \r\n            var user = new AccountModel\r\n            {\r\n                FirstName = model.FirstName,\r\n                LastName = model.LastName,\r\n                UserName = model.Email,\r\n                Email = model.Email,\r\n                PhoneNumber = model.PhoneNumber\r\n            };\r\n\r\n            if (model.Password is null) return View(model);\r\n            \r\n            var result = await _userManager.CreateAsync(user, model.Password);\r\n            \r\n            if (result.Succeeded)\r\n            {\r\n                await _signInManager.SignInAsync(user, isPersistent: false);\r\n                await UserEventOccurred?.Invoke(user.Id, \"The user is successfully registered!\")!;\r\n                return RedirectToAction(\"Index\", \"Home\");\r\n            }\r\n            \r\n            foreach (var error in result.Errors)\r\n            {\r\n                ModelState.AddModelError(string.Empty, error.Description);\r\n            }\r\n\r\n            return View(model);\r\n        }\r\n        \r\n        [HttpGet]\r\n        [AllowAnonymous]\r\n        public IActionResult Login(string? returnUrl = null)\r\n        {\r\n            ViewData[\"ReturnUrl\"] = returnUrl;\r\n            return View();\r\n        }\r\n        \r\n        [HttpPost]\r\n        [AllowAnonymous]\r\n        [ValidateAntiForgeryToken]\r\n        public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)\r\n        {\r\n            ViewData[\"ReturnUrl\"] = returnUrl;\r\n            if (!ModelState.IsValid) return View(model);\r\n            \r\n            var user = await FindBy.FindByEmailAsync(model.Email, _userManager);\r\n            \r\n            if (model.Password != null && user != null && await _userManager.CheckPasswordAsync(user, model.Password))\r\n            {\r\n                await _signInManager.SignInAsync(user, model.RememberMe);\r\n                await UserEventOccurred?.Invoke(user.Id, \"Authorisation was successful!\")!;\r\n                return RedirectToAction(\"Index\", \"Home\");\r\n            }\r\n            \r\n            ModelState.AddModelError(string.Empty, \"Error during authorisation!\");\r\n            \r\n            return View(model);\r\n        }\r\n        \r\n        [HttpPost]\r\n        [ValidateAntiForgeryToken]\r\n        public async Task<IActionResult> Logout()\r\n        {\r\n            await _signInManager.SignOutAsync();\r\n            return RedirectToAction(\"Index\", \"Home\");\r\n        }\r\n\r\n        [HttpGet]\r\n        [Authorize]\r\n        public IActionResult ChangePassword()\r\n        {\r\n            var model = new ChangePasswordViewModel();\r\n            return View(model);\r\n        }\r\n\r\n        [HttpPost]\r\n        [Authorize]\r\n        [ValidateAntiForgeryToken]\r\n        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)\r\n        {\r\n            if (!ModelState.IsValid) return View(model);\r\n            \r\n            var user = await _userManager.GetUserAsync(User);\r\n            \r\n            if (user is null)\r\n            {\r\n                return RedirectToAction(nameof(Login));\r\n            }\r\n\r\n            var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);\r\n            \r\n            if (!changePasswordResult.Succeeded)\r\n            {\r\n                foreach (var error in changePasswordResult.Errors)\r\n                {\r\n                    ModelState.AddModelError(string.Empty, error.Description);\r\n                }\r\n            \r\n                return View(model);\r\n            }\r\n\r\n            await _signInManager.RefreshSignInAsync(user);\r\n            model.Changed = true;\r\n        \r\n            return View(model);\r\n        }\r\n        \r\n        [HttpGet]\r\n        [Authorize]\r\n        public async Task<IActionResult> ViewProfile()\r\n        {\r\n            var user = await _userManager.GetUserAsync(User);\r\n            if (user == null)\r\n            {\r\n                return RedirectToAction(nameof(Login));\r\n            }\r\n\r\n            var model = new ProfileViewModel\r\n            {\r\n                FirstName = user.FirstName,\r\n                LastName = user.LastName,\r\n                Email = user.Email,\r\n                PhoneNumber = user.PhoneNumber,\r\n            };\r\n\r\n            return View(model);\r\n        }\r\n        \r\n        [HttpPost]\r\n        [Authorize]\r\n        [ValidateAntiForgeryToken]\r\n        public async Task<IActionResult> ViewProfile(ProfileViewModel model)\r\n        {\r\n            var user = await _userManager.GetUserAsync(User);\r\n\r\n            if (!ModelState.IsValid) return View(model);\r\n\r\n            if (user == null) return View(model);\r\n            \r\n            user.FirstName = model.FirstName;\r\n            user.LastName = model.LastName;\r\n            user.Email = model.Email;\r\n            \r\n            var result = await _userManager.UpdateAsync(user);\r\n            \r\n            if (result.Succeeded)\r\n            {\r\n                model.Changed = true;\r\n                return View(model);\r\n            }\r\n            \r\n            foreach (var error in result.Errors)\r\n            {\r\n                ModelState.AddModelError(string.Empty, error.Description);\r\n            }\r\n\r\n            return View(model);\r\n        }\r\n        \r\n        [HttpGet]\r\n        [Authorize]\r\n        public async Task<IActionResult> ViewBookings()\r\n        {\r\n            var user = await _userManager.GetUserAsync(User);\r\n            if (user is null)\r\n            {\r\n                return RedirectToAction(nameof(Login));\r\n            }\r\n\r\n            var bookings = _context.Bookings.Where(b => b.UserId == user.Id).ToList();\r\n\r\n            return View(bookings);\r\n        }\r\n\r\n    }\r\n}\r\n
+===================================================================
+diff --git a/TravelAgency/Controllers/AccountController.cs b/TravelAgency/Controllers/AccountController.cs
+--- a/TravelAgency/Controllers/AccountController.cs	
++++ b/TravelAgency/Controllers/AccountController.cs	
+@@ -1,55 +1,43 @@
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Identity;
+ using Microsoft.AspNetCore.Mvc;
++using TravelAgency.Models.Authentication;
+ using TravelAgency.Models.UserRelated;
++using TravelAgency.Utils;
++using TravelAgency.Utils.Abstract;
++using TravelAgency.Utils.Interfaces;
+ using TravelAgencyWeb.Data;
+-using TravelAgencyWeb.Models;
+-using TravelAgencyWeb.Utils;
+-using TravelAgencyWeb.Utils.Interfaces;
+ 
+-namespace TravelAgencyWeb.Controllers
+-{
+-    public class AccountController : Controller, IAccount
+-    {
+-        private readonly UserManager<AccountModel> _userManager;
+-        private readonly SignInManager<AccountModel> _signInManager;
+-        private readonly ApplicationDbContext _context;
+-        public delegate Task UserEventHandler(string userId, string message);
+-        public event UserEventHandler UserEventOccurred;
+-        
+-        public AccountController(UserManager<AccountModel> userManager, SignInManager<AccountModel> signInManager, ApplicationDbContext context)
+-        {
+-            _userManager = userManager;
+-            _signInManager = signInManager;
+-            _context = context;
+-            UserEventOccurred += async (userId, message) =>
+-            {
+-                TempData["UserNotification"] = message;
+-            };
+-        }
+-        
++namespace TravelAgency.Controllers
++{
++    public class AccountController(
++        UserManager<AccountModel> userManager,
++        SignInManager<AccountModel> signInManager,
++        ApplicationDbContext context)
++        : BaseController(userManager, context), IAccount
++    {
+         [HttpGet]
+         [AllowAnonymous]
+         public IActionResult Register()
+         {
+             return View();
+         }
+-        
++
+         [HttpPost]
+         [AllowAnonymous]
+         [ValidateAntiForgeryToken]
+         public async Task<IActionResult> Register(RegisterViewModel model)
+         {
+             if (!ModelState.IsValid) return View(model);
+-            
+-            var existingUser = await FindBy.FindByEmailAsync(model.Email, _userManager);
+-                
++
++            var existingUser = await FindBy.FindByEmailAsync(model.Email, UserManager);
++
+             if (existingUser != null)
+             {
+                 ModelState.AddModelError(string.Empty, "This email is already in use!");
+                 return View(model);
+             }
+-                
++
+             var user = new AccountModel
+             {
+                 FirstName = model.FirstName,
+@@ -60,16 +48,15 @@
+             };
+ 
+             if (model.Password is null) return View(model);
+-            
+-            var result = await _userManager.CreateAsync(user, model.Password);
+-            
++
++            var result = await UserManager.CreateAsync(user, model.Password);
++
+             if (result.Succeeded)
+             {
+-                await _signInManager.SignInAsync(user, isPersistent: false);
+-                await UserEventOccurred?.Invoke(user.Id, "The user is successfully registered!")!;
++                await signInManager.SignInAsync(user, isPersistent: false);
+                 return RedirectToAction("Index", "Home");
+             }
+-            
++
+             foreach (var error in result.Errors)
+             {
+                 ModelState.AddModelError(string.Empty, error.Description);
+@@ -77,7 +64,7 @@
+ 
+             return View(model);
+         }
+-        
++
+         [HttpGet]
+         [AllowAnonymous]
+         public IActionResult Login(string? returnUrl = null)
+@@ -85,7 +72,7 @@
+             ViewData["ReturnUrl"] = returnUrl;
+             return View();
+         }
+-        
++
+         [HttpPost]
+         [AllowAnonymous]
+         [ValidateAntiForgeryToken]
+@@ -93,26 +80,25 @@
+         {
+             ViewData["ReturnUrl"] = returnUrl;
+             if (!ModelState.IsValid) return View(model);
+-            
+-            var user = await FindBy.FindByEmailAsync(model.Email, _userManager);
+-            
+-            if (model.Password != null && user != null && await _userManager.CheckPasswordAsync(user, model.Password))
++
++            var user = await FindBy.FindByEmailAsync(model.Email, UserManager);
++
++            if (model.Password != null && user != null && await UserManager.CheckPasswordAsync(user, model.Password))
+             {
+-                await _signInManager.SignInAsync(user, model.RememberMe);
+-                await UserEventOccurred?.Invoke(user.Id, "Authorisation was successful!")!;
++                await signInManager.SignInAsync(user, model.RememberMe);
+                 return RedirectToAction("Index", "Home");
+             }
+-            
++
+             ModelState.AddModelError(string.Empty, "Error during authorisation!");
+-            
++
+             return View(model);
+         }
+-        
++
+         [HttpPost]
+         [ValidateAntiForgeryToken]
+         public async Task<IActionResult> Logout()
+         {
+-            await _signInManager.SignOutAsync();
++            await signInManager.SignOutAsync();
+             return RedirectToAction("Index", "Home");
+         }
+ 
+@@ -130,37 +116,40 @@
+         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+         {
+             if (!ModelState.IsValid) return View(model);
+-            
+-            var user = await _userManager.GetUserAsync(User);
+-            
++
++            var user = await UserManager.GetUserAsync(User);
++
+             if (user is null)
+             {
+                 return RedirectToAction(nameof(Login));
+             }
+ 
+-            var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+-            
+-            if (!changePasswordResult.Succeeded)
+-            {
+-                foreach (var error in changePasswordResult.Errors)
+-                {
+-                    ModelState.AddModelError(string.Empty, error.Description);
+-                }
+-            
+-                return View(model);
++            if (model is { CurrentPassword: not null, NewPassword: not null })
++            {
++                var changePasswordResult = await UserManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
++
++                if (!changePasswordResult.Succeeded)
++                {
++                    foreach (var error in changePasswordResult.Errors)
++                    {
++                        ModelState.AddModelError(string.Empty, error.Description);
++                    }
++
++                    return View(model);
++                }
+             }
+ 
+-            await _signInManager.RefreshSignInAsync(user);
++            await signInManager.RefreshSignInAsync(user);
+             model.Changed = true;
+-        
++
+             return View(model);
+         }
+-        
++
+         [HttpGet]
+         [Authorize]
+         public async Task<IActionResult> ViewProfile()
+         {
+-            var user = await _userManager.GetUserAsync(User);
++            var user = await UserManager.GetUserAsync(User);
+             if (user == null)
+             {
+                 return RedirectToAction(nameof(Login));
+@@ -176,30 +165,30 @@
+ 
+             return View(model);
+         }
+-        
++
+         [HttpPost]
+         [Authorize]
+         [ValidateAntiForgeryToken]
+         public async Task<IActionResult> ViewProfile(ProfileViewModel model)
+         {
+-            var user = await _userManager.GetUserAsync(User);
++            var user = await UserManager.GetUserAsync(User);
+ 
+             if (!ModelState.IsValid) return View(model);
+ 
+             if (user == null) return View(model);
+-            
++
+             user.FirstName = model.FirstName;
+             user.LastName = model.LastName;
+             user.Email = model.Email;
+-            
+-            var result = await _userManager.UpdateAsync(user);
+-            
++
++            var result = await UserManager.UpdateAsync(user);
++
+             if (result.Succeeded)
+             {
+                 model.Changed = true;
+                 return View(model);
+             }
+-            
++
+             foreach (var error in result.Errors)
+             {
+                 ModelState.AddModelError(string.Empty, error.Description);
+@@ -207,21 +196,20 @@
+ 
+             return View(model);
+         }
+-        
++
+         [HttpGet]
+         [Authorize]
+         public async Task<IActionResult> ViewBookings()
+         {
+-            var user = await _userManager.GetUserAsync(User);
++            var user = await UserManager.GetUserAsync(User);
+             if (user is null)
+             {
+                 return RedirectToAction(nameof(Login));
+             }
+ 
+-            var bookings = _context.Bookings.Where(b => b.UserId == user.Id).ToList();
++            var bookings = Context.Bookings.Where(b => b.UserId == user.Id).ToList();
+ 
+             return View(bookings);
+         }
+-
+     }
+ }
+Index: TravelAgency/Controllers/BookingController.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using System.Text.Json;\r\nusing Microsoft.AspNetCore.Identity;\r\nusing Microsoft.AspNetCore.Mvc;\r\nusing TravelAgency.Models;\r\nusing TravelAgency.Models.UserRelated;\r\nusing TravelAgencyWeb.Data;\r\nusing TravelAgencyWeb.Models;\r\nusing TravelAgencyWeb.Utils.Enumerations;\r\n\r\nnamespace TravelAgencyWeb.Controllers\r\n{\r\n    public class BookingController(UserManager<AccountModel> userManager, ApplicationDbContext context)\r\n        : Controller\r\n    {\r\n        public delegate Task ConfirmationEventHandler(string userEmail, string message);\r\n\r\n        public event ConfirmationEventHandler? BookingConfirmed;\r\n\r\n        [HttpPost]\r\n        public async Task<IActionResult> ConfirmBooking(string? flightJson)\r\n        {\r\n            if (string.IsNullOrEmpty(flightJson))\r\n            {\r\n                return BadRequest(\"Flight JSON is missing or empty.\");\r\n            }\r\n\r\n            FlightModel? flightModel = null;\r\n            try\r\n            {\r\n                flightModel = JsonSerializer.Deserialize<FlightModel>(flightJson);\r\n            }\r\n            catch (JsonException ex)\r\n            {\r\n                return BadRequest(\"Error deserializing flight JSON.\");\r\n            }\r\n\r\n            if (flightModel == null) return View();\r\n\r\n            var user = await userManager.GetUserAsync(User);\r\n\r\n            if (user == null)\r\n            {\r\n                return RedirectToAction(\"Login\", \"Account\");\r\n            }\r\n\r\n            var booking = new BookingModel()\r\n            {\r\n                BookingDate = DateTime.Now,\r\n                UserId = user.Id,\r\n                FlightId = flightModel.FlightId,\r\n                UserFirstName = user.FirstName,\r\n                UserLastName = user.LastName,\r\n                UserEmail = user.Email,\r\n                UserPhoneNumber = user.PhoneNumber,\r\n                DepartureCity = flightModel.DepartureCity,\r\n                DestinationCity = flightModel.DestinationCity,\r\n                DepartureTime = flightModel.DepartureTime,\r\n                Price = flightModel.Price,\r\n                Status = BookingStatus.Confirmed,\r\n            };\r\n\r\n            try\r\n            {\r\n                if (!ModelState.IsValid)\r\n                {\r\n                    ModelState.AddModelError(\"\", \"Invalid booking details.\");\r\n                    return View(\"Error\");\r\n                }\r\n\r\n                await UpdateFlightAvailability(flightModel);\r\n                context.Bookings.Add(booking);\r\n                await context.SaveChangesAsync();\r\n\r\n                Console.WriteLine(\"Booking confirmed successfully!\");\r\n                return View(booking);\r\n            }\r\n            catch (Exception ex)\r\n            {\r\n                Console.WriteLine(\"Error: \" + ex.Message);\r\n                return View(\"Error\");\r\n            }\r\n        }\r\n\r\n        private async Task<IActionResult> UpdateFlightAvailability(FlightModel flightModel)\r\n        {\r\n            var flight = await context.Flights.FindAsync(flightModel.FlightId);\r\n            if (flight == null)\r\n            {\r\n                return NotFound(\"Flight not found.\");\r\n            }\r\n\r\n            flight.IsAvailable = false;\r\n\r\n            return Ok(\"Flight availability updated successfully.\");\r\n        }\r\n    }\r\n}\r\n
+===================================================================
+diff --git a/TravelAgency/Controllers/BookingController.cs b/TravelAgency/Controllers/BookingController.cs
+--- a/TravelAgency/Controllers/BookingController.cs	
++++ b/TravelAgency/Controllers/BookingController.cs	
+@@ -3,14 +3,14 @@
+ using Microsoft.AspNetCore.Mvc;
+ using TravelAgency.Models;
+ using TravelAgency.Models.UserRelated;
++using TravelAgency.Utils.Abstract;
++using TravelAgency.Utils.Enumerations;
+ using TravelAgencyWeb.Data;
+-using TravelAgencyWeb.Models;
+-using TravelAgencyWeb.Utils.Enumerations;
+ 
+-namespace TravelAgencyWeb.Controllers
++namespace TravelAgency.Controllers
+ {
+     public class BookingController(UserManager<AccountModel> userManager, ApplicationDbContext context)
+-        : Controller
++        : BaseController(userManager, context)
+     {
+         public delegate Task ConfirmationEventHandler(string userEmail, string message);
+ 
+@@ -36,7 +36,7 @@
+ 
+             if (flightModel == null) return View();
+ 
+-            var user = await userManager.GetUserAsync(User);
++            var user = await UserManager.GetUserAsync(User);
+ 
+             if (user == null)
+             {
+@@ -68,8 +68,13 @@
+                 }
+ 
+                 await UpdateFlightAvailability(flightModel);
+-                context.Bookings.Add(booking);
+-                await context.SaveChangesAsync();
++                Context.Bookings.Add(booking);
++                await Context.SaveChangesAsync();
++
++                if (BookingConfirmed != null)
++                {
++                    await BookingConfirmed(user.Email, "Your booking has been confirmed.");
++                }
+ 
+                 Console.WriteLine("Booking confirmed successfully!");
+                 return View(booking);
+@@ -83,7 +88,7 @@
+ 
+         private async Task<IActionResult> UpdateFlightAvailability(FlightModel flightModel)
+         {
+-            var flight = await context.Flights.FindAsync(flightModel.FlightId);
++            var flight = await Context.Flights.FindAsync(flightModel.FlightId);
+             if (flight == null)
+             {
+                 return NotFound("Flight not found.");
+Index: TravelAgency/Controllers/AdminController.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using Microsoft.AspNetCore.Authorization;\r\nusing Microsoft.AspNetCore.Identity;\r\nusing Microsoft.AspNetCore.Mvc;\r\nusing Microsoft.EntityFrameworkCore;\r\nusing TravelAgency.Models.Admin;\r\nusing TravelAgency.Models.UserRelated;\r\nusing TravelAgencyWeb.Data;\r\nusing TravelAgencyWeb.Models;\r\nusing TravelAgencyWeb.Utils;\r\nusing TravelAgencyWeb.Utils.Interfaces;\r\nusing UserRole = TravelAgencyWeb.Utils.Enumerations.UserRole;\r\n\r\nnamespace TravelAgencyWeb.Controllers\r\n{\r\n        public class AdminController(UserManager<AccountModel> userManager, ApplicationDbContext context)\r\n            : Controller, IAdmin\r\n        {\r\n            [HttpGet]\r\n        public async Task<IActionResult> AdminPanel()\r\n        {\r\n            var user = await userManager.GetUserAsync(User);\r\n\r\n            if (user is not { Role: UserRole.Admin })\r\n            {\r\n                return RedirectToAction(\"Index\", \"Home\");\r\n            }\r\n            \r\n            var allUsers = userManager.Users.ToList();\r\n            \r\n            var usersExceptCurrent = allUsers\r\n                .Where(u => u.Id != user.Id).ToList();\r\n            \r\n            var articles = context.Flights.ToList();\r\n\r\n            AdminPanelViewModel model = new() {\r\n                AccModels = usersExceptCurrent,\r\n                FlightModels = articles\r\n            };\r\n            return View(model);\r\n        }\r\n        \r\n        [Authorize]\r\n        public async Task<IActionResult> AddUser()\r\n        {\r\n            var newUser = new AddUserModel();\r\n            return View(newUser);\r\n        }\r\n        \r\n        [HttpPost]\r\n        [Authorize]\r\n        public async Task<IActionResult> AddUser(AddUserModel newUser)\r\n        {\r\n            if (!ModelState.IsValid) return View(newUser);\r\n            \r\n            var existingUser = await FindBy.FindByEmailAsync(newUser.Email, userManager);\r\n            \r\n            if (existingUser != null)\r\n            {\r\n                ModelState.AddModelError(string.Empty, \"This email address is already in use!\");\r\n                return View(newUser);\r\n            }\r\n            \r\n            var user = new AccountModel\r\n            {\r\n                FirstName = newUser.FirstName,\r\n                LastName = newUser.LastName,\r\n                UserName = newUser.Email,\r\n                Email = newUser.Email,\r\n                PhoneNumber = newUser.Phone\r\n            };        \r\n            \r\n            var result = await userManager.CreateAsync(user, newUser.Password);\r\n\r\n            if (result.Succeeded)\r\n            {\r\n                return RedirectToAction(\"AdminPanel\");\r\n            }\r\n            \r\n            foreach (var error in result.Errors)\r\n            {\r\n                ModelState.AddModelError(string.Empty, error.Description);\r\n            }\r\n\r\n            return View(newUser);\r\n        }\r\n\r\n        [HttpPost]\r\n        [Authorize]\r\n        public async Task<IActionResult> UpdateUser(string userId, string firstName, string lastName, string email, string phone, UserRole role)\r\n        {\r\n            var user = await userManager.FindByIdAsync(userId);\r\n    \r\n            if (user == null)\r\n            {\r\n                return RedirectToAction(\"AdminPanel\");\r\n            }\r\n    \r\n            user.FirstName = firstName;\r\n            user.LastName = lastName;\r\n            user.Email = email;\r\n            user.PhoneNumber = phone;\r\n            user.Role = role;\r\n\r\n            var result = await userManager.UpdateAsync(user);\r\n            if (!result.Succeeded)\r\n            {\r\n                foreach (var error in result.Errors)\r\n                {\r\n                    ModelState.AddModelError(string.Empty, error.Description);\r\n                }\r\n                return View(); \r\n            }\r\n\r\n            return RedirectToAction(\"AdminPanel\");\r\n        }\r\n\r\n\r\n        [HttpPost]\r\n        [Authorize]\r\n        public async Task<IActionResult> DeleteUser(string userId)\r\n        {\r\n            var user = await userManager.FindByIdAsync(userId);\r\n            \r\n            if (user is null) return RedirectToAction(\"AdminPanel\");\r\n            \r\n            await userManager.DeleteAsync(user);\r\n            await context.SaveChangesAsync();\r\n\r\n            return RedirectToAction(\"AdminPanel\");\r\n        }\r\n        \r\n        [Authorize]\r\n        public async Task<IActionResult> AddFlight()\r\n        {\r\n            var model = new FlightModel\r\n            {\r\n                DepartureTime = DateTime.Now,\r\n                ArrivalTime = DateTime.Now, \r\n            };\r\n            \r\n            return View(model);\r\n        }\r\n        \r\n        [HttpPost]\r\n        [Authorize]\r\n        public async Task<IActionResult> AddFlight(FlightModel newFlight)\r\n        {\r\n            if (!ModelState.IsValid) return View(newFlight);\r\n            \r\n            var existingArticle = await context.Flights.FirstOrDefaultAsync(f => f.FlightId == newFlight.FlightId);\r\n            \r\n            if (existingArticle != null)\r\n            {\r\n                ModelState.AddModelError(string.Empty, \"Flight with such id is already exist!\");\r\n                return View(newFlight);\r\n            }\r\n\r\n            var flight = new FlightModel\r\n            {\r\n                DepartureCity = newFlight.DepartureCity,\r\n                DestinationCity = newFlight.DestinationCity,\r\n                DepartureTime = newFlight.DepartureTime,\r\n                ArrivalTime = newFlight.ArrivalTime,\r\n                Price = newFlight.Price,\r\n                IsAvailable = newFlight.IsAvailable,\r\n                ImageUrl = newFlight.ImageUrl,\r\n                Description = newFlight.Description\r\n            };\r\n            \r\n            flight.DestinationCity = Request.Form[\"DestinationCity\"];\r\n            \r\n            await context.Flights.AddAsync(flight);\r\n            await context.SaveChangesAsync();\r\n\r\n            return RedirectToAction(\"AdminPanel\");\r\n\r\n        }\r\n\r\n        [HttpPost]\r\n        [Authorize]\r\n        public async Task<IActionResult> UpdateFlight(int flightId, string departureCity, string destinationCity, \r\n            DateTime departureTime, DateTime arrivalTime, decimal price, bool isAvailable, string? imageUrl, string? description)\r\n        {\r\n            var flight = await context.Flights.FindAsync(flightId);\r\n\r\n            if (flight == null) return RedirectToAction(\"AdminPanel\");\r\n\r\n            flight.DepartureCity = departureCity;\r\n            flight.DestinationCity = destinationCity;\r\n            flight.DepartureTime = departureTime;\r\n            flight.ArrivalTime = arrivalTime;\r\n            flight.Price = price;\r\n            flight.IsAvailable = isAvailable;\r\n            flight.ImageUrl = imageUrl;\r\n            flight.Description = description;\r\n\r\n            await context.SaveChangesAsync();\r\n\r\n            return RedirectToAction(\"AdminPanel\");\r\n        }\r\n\r\n        [HttpPost]\r\n        [Authorize]\r\n        public async Task<IActionResult> DeleteFlight(int flightId)\r\n        {\r\n            var flight = await context.Flights.FindAsync(flightId);\r\n\r\n            if (flight == null) return RedirectToAction(\"AdminPanel\");\r\n\r\n            context.Flights.Remove(flight);\r\n            await context.SaveChangesAsync();\r\n\r\n            return RedirectToAction(\"AdminPanel\");\r\n        }\r\n    }\r\n}
+===================================================================
+diff --git a/TravelAgency/Controllers/AdminController.cs b/TravelAgency/Controllers/AdminController.cs
+--- a/TravelAgency/Controllers/AdminController.cs	
++++ b/TravelAgency/Controllers/AdminController.cs	
+@@ -2,64 +2,67 @@
+ using Microsoft.AspNetCore.Identity;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
++using TravelAgency.Models;
+ using TravelAgency.Models.Admin;
+ using TravelAgency.Models.UserRelated;
++using TravelAgency.Utils;
++using TravelAgency.Utils.Abstract;
++using TravelAgency.Utils.Interfaces;
+ using TravelAgencyWeb.Data;
+-using TravelAgencyWeb.Models;
+-using TravelAgencyWeb.Utils;
+-using TravelAgencyWeb.Utils.Interfaces;
+-using UserRole = TravelAgencyWeb.Utils.Enumerations.UserRole;
++using UserRole = TravelAgency.Utils.Enumerations.UserRole;
+ 
+-namespace TravelAgencyWeb.Controllers
++namespace TravelAgency.Controllers
+ {
+-        public class AdminController(UserManager<AccountModel> userManager, ApplicationDbContext context)
+-            : Controller, IAdmin
+-        {
+-            [HttpGet]
++    public class AdminController(UserManager<AccountModel> userManager, ApplicationDbContext context)
++        : BaseController(userManager, context), IAdmin
++    {
++        [HttpGet]
+         public async Task<IActionResult> AdminPanel()
+         {
+-            var user = await userManager.GetUserAsync(User);
++            var user = await UserManager.GetUserAsync(User);
+ 
+             if (user is not { Role: UserRole.Admin })
+             {
+                 return RedirectToAction("Index", "Home");
+             }
+-            
+-            var allUsers = userManager.Users.ToList();
+-            
++
++            var allUsers = await UserManager.Users.ToListAsync();
++
+             var usersExceptCurrent = allUsers
+                 .Where(u => u.Id != user.Id).ToList();
+-            
+-            var articles = context.Flights.ToList();
++
++            var articles = await Context.Flights.ToListAsync();
+ 
+-            AdminPanelViewModel model = new() {
++            AdminPanelViewModel model = new()
++            {
+                 AccModels = usersExceptCurrent,
+                 FlightModels = articles
+             };
+             return View(model);
+         }
+-        
++
+         [Authorize]
+-        public async Task<IActionResult> AddUser()
++        [HttpGet]
++        public IActionResult AddUser()
+         {
+             var newUser = new AddUserModel();
+             return View(newUser);
+         }
+-        
++
+         [HttpPost]
+         [Authorize]
+         public async Task<IActionResult> AddUser(AddUserModel newUser)
+         {
+             if (!ModelState.IsValid) return View(newUser);
+-            
+-            var existingUser = await FindBy.FindByEmailAsync(newUser.Email, userManager);
+-            
++
++            var existingUser = await FindBy.FindByEmailAsync(newUser.Email, UserManager);
++
+             if (existingUser != null)
+             {
+                 ModelState.AddModelError(string.Empty, "This email address is already in use!");
+                 return View(newUser);
+             }
+-            
++
+             var user = new AccountModel
+             {
+                 FirstName = newUser.FirstName,
+@@ -67,15 +70,15 @@
+                 UserName = newUser.Email,
+                 Email = newUser.Email,
+                 PhoneNumber = newUser.Phone
+-            };        
+-            
+-            var result = await userManager.CreateAsync(user, newUser.Password);
++            };
++
++            var result = await UserManager.CreateAsync(user, newUser.Password);
+ 
+             if (result.Succeeded)
+             {
+                 return RedirectToAction("AdminPanel");
+             }
+-            
++
+             foreach (var error in result.Errors)
+             {
+                 ModelState.AddModelError(string.Empty, error.Description);
+@@ -88,100 +91,83 @@
+         [Authorize]
+         public async Task<IActionResult> UpdateUser(string userId, string firstName, string lastName, string email, string phone, UserRole role)
+         {
+-            var user = await userManager.FindByIdAsync(userId);
+-    
++            var user = await UserManager.FindByIdAsync(userId);
++
+             if (user == null)
+             {
+                 return RedirectToAction("AdminPanel");
+             }
+-    
++
+             user.FirstName = firstName;
+             user.LastName = lastName;
+             user.Email = email;
+             user.PhoneNumber = phone;
+             user.Role = role;
+ 
+-            var result = await userManager.UpdateAsync(user);
+-            if (!result.Succeeded)
+-            {
+-                foreach (var error in result.Errors)
+-                {
+-                    ModelState.AddModelError(string.Empty, error.Description);
+-                }
+-                return View(); 
++            var result = await UserManager.UpdateAsync(user);
++            if (result.Succeeded) return RedirectToAction("AdminPanel");
++            
++            foreach (var error in result.Errors)
++            {
++                ModelState.AddModelError(string.Empty, error.Description);
+             }
+-
++            
+             return RedirectToAction("AdminPanel");
+         }
+ 
+-
+         [HttpPost]
+         [Authorize]
+         public async Task<IActionResult> DeleteUser(string userId)
+         {
+-            var user = await userManager.FindByIdAsync(userId);
+-            
+-            if (user is null) return RedirectToAction("AdminPanel");
+-            
+-            await userManager.DeleteAsync(user);
+-            await context.SaveChangesAsync();
++            var user = await UserManager.FindByIdAsync(userId);
++
++            if (user == null) return RedirectToAction("AdminPanel");
++
++            await UserManager.DeleteAsync(user);
++            await Context.SaveChangesAsync();
+ 
+             return RedirectToAction("AdminPanel");
+         }
+-        
++
+         [Authorize]
+-        public async Task<IActionResult> AddFlight()
++        [HttpGet]
++        public IActionResult AddFlight()
+         {
+             var model = new FlightModel
+             {
+                 DepartureTime = DateTime.Now,
+-                ArrivalTime = DateTime.Now, 
++                ArrivalTime = DateTime.Now,
+             };
+-            
++
+             return View(model);
+         }
+-        
++
+         [HttpPost]
+         [Authorize]
+         public async Task<IActionResult> AddFlight(FlightModel newFlight)
+         {
+             if (!ModelState.IsValid) return View(newFlight);
+-            
+-            var existingArticle = await context.Flights.FirstOrDefaultAsync(f => f.FlightId == newFlight.FlightId);
+-            
+-            if (existingArticle != null)
++
++            var existingFlight = await Context.Flights.FirstOrDefaultAsync(f => f.FlightId == newFlight.FlightId);
++
++            if (existingFlight != null)
+             {
+-                ModelState.AddModelError(string.Empty, "Flight with such id is already exist!");
++                ModelState.AddModelError(string.Empty, "Flight with such id already exists!");
+                 return View(newFlight);
+             }
+ 
+-            var flight = new FlightModel
+-            {
+-                DepartureCity = newFlight.DepartureCity,
+-                DestinationCity = newFlight.DestinationCity,
+-                DepartureTime = newFlight.DepartureTime,
+-                ArrivalTime = newFlight.ArrivalTime,
+-                Price = newFlight.Price,
+-                IsAvailable = newFlight.IsAvailable,
+-                ImageUrl = newFlight.ImageUrl,
+-                Description = newFlight.Description
+-            };
+-            
+-            flight.DestinationCity = Request.Form["DestinationCity"];
+-            
+-            await context.Flights.AddAsync(flight);
+-            await context.SaveChangesAsync();
++            await Context.Flights.AddAsync(newFlight);
++            await Context.SaveChangesAsync();
+ 
+             return RedirectToAction("AdminPanel");
+-
+         }
+ 
+         [HttpPost]
+         [Authorize]
+-        public async Task<IActionResult> UpdateFlight(int flightId, string departureCity, string destinationCity, 
++        public async Task<IActionResult> UpdateFlight(int flightId, string departureCity, string destinationCity,
+             DateTime departureTime, DateTime arrivalTime, decimal price, bool isAvailable, string? imageUrl, string? description)
+         {
+-            var flight = await context.Flights.FindAsync(flightId);
++            var flight = await Context.Flights.FindAsync(flightId);
+ 
+             if (flight == null) return RedirectToAction("AdminPanel");
+ 
+@@ -194,7 +180,7 @@
+             flight.ImageUrl = imageUrl;
+             flight.Description = description;
+ 
+-            await context.SaveChangesAsync();
++            await Context.SaveChangesAsync();
+ 
+             return RedirectToAction("AdminPanel");
+         }
+@@ -203,14 +189,14 @@
+         [Authorize]
+         public async Task<IActionResult> DeleteFlight(int flightId)
+         {
+-            var flight = await context.Flights.FindAsync(flightId);
++            var flight = await Context.Flights.FindAsync(flightId);
+ 
+             if (flight == null) return RedirectToAction("AdminPanel");
+ 
+-            context.Flights.Remove(flight);
+-            await context.SaveChangesAsync();
++            Context.Flights.Remove(flight);
++            await Context.SaveChangesAsync();
+ 
+             return RedirectToAction("AdminPanel");
+         }
+     }
+-}
+\ No newline at end of file
++}
+Index: TravelAgency/Controllers/HomeController.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using System.Diagnostics;\r\nusing Microsoft.AspNetCore.Mvc;\r\nusing TravelAgencyWeb.Models;\r\nusing TravelAgencyWeb.Models.Search;\r\n\r\nnamespace TravelAgencyWeb.Controllers;\r\n\r\npublic class HomeController : Controller\r\n{\r\n    public IActionResult Index()\r\n    {\r\n        var searchModel = new SearchViewModel\r\n        {\r\n            DepartureDate = DateTime.Today,\r\n            Quantity = 1    \r\n        };\r\n\r\n        return View(searchModel);\r\n    }\r\n\r\n\r\n    [HttpPost]\r\n    public IActionResult Search(SearchViewModel searchViewModel)\r\n    {\r\n        return RedirectToAction(\"SearchResult\", \"Search\", searchViewModel);\r\n    }\r\n\r\n    public IActionResult Privacy()\r\n    {\r\n        return View();\r\n    }\r\n\r\n    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]\r\n    public IActionResult Error()\r\n    {\r\n        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });\r\n    }\r\n}
+===================================================================
+diff --git a/TravelAgency/Controllers/HomeController.cs b/TravelAgency/Controllers/HomeController.cs
+--- a/TravelAgency/Controllers/HomeController.cs	
++++ b/TravelAgency/Controllers/HomeController.cs	
+@@ -1,9 +1,9 @@
+ using System.Diagnostics;
+ using Microsoft.AspNetCore.Mvc;
+-using TravelAgencyWeb.Models;
+-using TravelAgencyWeb.Models.Search;
++using TravelAgency.Models;
++using TravelAgency.Models.Search;
+ 
+-namespace TravelAgencyWeb.Controllers;
++namespace TravelAgency.Controllers;
+ 
+ public class HomeController : Controller
+ {
+Index: TravelAgency/obj/rider.project.restore.info
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>17156211806857469
+===================================================================
+diff --git a/TravelAgency/obj/rider.project.restore.info b/TravelAgency/obj/rider.project.restore.info
+--- a/TravelAgency/obj/rider.project.restore.info	
++++ b/TravelAgency/obj/rider.project.restore.info	
+@@ -1,1 +1,1 @@
+-17156211806857469
+\ No newline at end of file
++17157787606992538
+\ No newline at end of file
+Index: TravelAgency/TravelAgency.csproj
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><Project Sdk=\"Microsoft.NET.Sdk.Web\">\r\n\r\n    <PropertyGroup>\r\n        <TargetFramework>net8.0</TargetFramework>\r\n        <Nullable>enable</Nullable>\r\n        <ImplicitUsings>enable</ImplicitUsings>\r\n        <UserSecretsId>aspnet-TravelAgency-FAA0A050-B296-4AB4-8EEA-8FEA4426551A</UserSecretsId>\r\n    </PropertyGroup>\r\n\r\n    <ItemGroup>\r\n        <PackageReference Include=\"Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore\" Version=\"8.0.4\"/>\r\n        <PackageReference Include=\"Microsoft.AspNetCore.Identity.EntityFrameworkCore\" Version=\"8.0.4\"/>\r\n        <PackageReference Include=\"Microsoft.AspNetCore.Identity.UI\" Version=\"8.0.4\"/>\r\n        <PackageReference Include=\"Microsoft.EntityFrameworkCore.SqlServer\" Version=\"8.0.4\"/>\r\n        <PackageReference Include=\"Microsoft.EntityFrameworkCore.Tools\" Version=\"8.0.4\"/>\r\n    </ItemGroup>\r\n\r\n</Project>\r\n
+===================================================================
+diff --git a/TravelAgency/TravelAgency.csproj b/TravelAgency/TravelAgency.csproj
+--- a/TravelAgency/TravelAgency.csproj	
++++ b/TravelAgency/TravelAgency.csproj	
+@@ -15,4 +15,8 @@
+         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4"/>
+     </ItemGroup>
+ 
++    <ItemGroup>
++      <Folder Include="Data\Migrations\" />
++    </ItemGroup>
++
+ </Project>
+Index: TravelAgency/obj/Debug/net8.0/TravelAgency.sourcelink.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\"documents\":{\"D:\\\\Pet-Projects\\\\travel-agency\\\\*\":\"https://raw.githubusercontent.com/kuma4ka/travel-agency/09badeb21fb4c8e453e40d5bcdbdb4114e618793/*\"}}
+===================================================================
+diff --git a/TravelAgency/obj/Debug/net8.0/TravelAgency.sourcelink.json b/TravelAgency/obj/Debug/net8.0/TravelAgency.sourcelink.json
+--- a/TravelAgency/obj/Debug/net8.0/TravelAgency.sourcelink.json	
++++ b/TravelAgency/obj/Debug/net8.0/TravelAgency.sourcelink.json	
+@@ -1,1 +1,1 @@
+-{"documents":{"D:\\Pet-Projects\\travel-agency\\*":"https://raw.githubusercontent.com/kuma4ka/travel-agency/09badeb21fb4c8e453e40d5bcdbdb4114e618793/*"}}
+\ No newline at end of file
++{"documents":{"D:\\Pet-Projects\\travel-agency\\*":"https://raw.githubusercontent.com/kuma4ka/travel-agency/11bac2183a638087590645e7e662b20720e5f747/*"}}
+\ No newline at end of file
+Index: TravelAgency/Program.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using Microsoft.AspNetCore.Identity;\r\nusing Microsoft.EntityFrameworkCore;\r\nusing TravelAgency.Models.UserRelated;\r\nusing TravelAgencyWeb.Data;\r\nusing TravelAgencyWeb.Models;\r\n\r\nvar builder = WebApplication.CreateBuilder(args);\r\n\r\n// Add services to the container.\r\nvar connectionString = builder.Configuration.GetConnectionString(\"DefaultConnection\") ?? throw new InvalidOperationException(\"Connection string 'DefaultConnection' not found.\");\r\nbuilder.Services.AddDbContext<ApplicationDbContext>(options =>\r\n    options.UseSqlServer(connectionString));\r\nbuilder.Services.AddDatabaseDeveloperPageExceptionFilter();\r\n\r\nbuilder.Services.AddIdentity<AccountModel, IdentityRole>(\r\n        options =>\r\n        {\r\n            options.Password.RequiredUniqueChars = 0;\r\n            options.Password.RequireDigit = false;\r\n            options.Password.RequiredLength = 6;\r\n            options.Password.RequireUppercase = false;\r\n            options.Password.RequireNonAlphanumeric = false;\r\n            options.User.RequireUniqueEmail = true;\r\n            options.SignIn.RequireConfirmedAccount = false;\r\n            options.SignIn.RequireConfirmedEmail = false;\r\n        })\r\n    .AddEntityFrameworkStores<ApplicationDbContext>()\r\n    .AddDefaultTokenProviders();\r\nbuilder.Services.AddControllersWithViews();\r\n\r\nvar app = builder.Build();\r\n\r\n// Configure the HTTP request pipeline.\r\nif (app.Environment.IsDevelopment())\r\n{\r\n    app.UseMigrationsEndPoint();\r\n}\r\nelse\r\n{\r\n    app.UseExceptionHandler(\"/Home/Error\");\r\n    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.\r\n    app.UseHsts();\r\n}\r\n\r\napp.UseHttpsRedirection();\r\napp.UseStaticFiles();\r\n\r\napp.UseRouting();\r\n\r\napp.UseAuthentication();\r\napp.UseAuthorization();\r\n\r\napp.MapControllerRoute(\r\n    name: \"default\",\r\n    pattern: \"{controller=Home}/{action=Index}/{id?}\");\r\n\r\napp.Run();
+===================================================================
+diff --git a/TravelAgency/Program.cs b/TravelAgency/Program.cs
+--- a/TravelAgency/Program.cs	
++++ b/TravelAgency/Program.cs	
+@@ -2,7 +2,6 @@
+ using Microsoft.EntityFrameworkCore;
+ using TravelAgency.Models.UserRelated;
+ using TravelAgencyWeb.Data;
+-using TravelAgencyWeb.Models;
+ 
+ var builder = WebApplication.CreateBuilder(args);
+ 
+Index: TravelAgency/Models/BookingModel.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using System.ComponentModel.DataAnnotations;\r\nusing BookingStatus = TravelAgencyWeb.Utils.Enumerations.BookingStatus;\r\n\r\nnamespace TravelAgency.Models;\r\n\r\npublic class BookingModel\r\n{\r\n    public int BookingId { get; set; }\r\n    public string? UserId { get; set; }\r\n    public int FlightId { get; set; }\r\n    public string? UserFirstName { get; set; }\r\n    public string? UserLastName { get; set; }\r\n    public string? UserPhoneNumber { get; set; }\r\n    public string? UserEmail { get; set; }\r\n    public string? DepartureCity { get; set; }\r\n    public string? DestinationCity { get; set; }\r\n    [DataType(DataType.Date)]\r\n    public DateTime DepartureTime { get; set; }\r\n    public decimal Price { get; set; }\r\n    [DataType(DataType.Date)]\r\n    public DateTime BookingDate { get; set; }\r\n    public BookingStatus Status { get; set; }\r\n}
+===================================================================
+diff --git a/TravelAgency/Models/BookingModel.cs b/TravelAgency/Models/BookingModel.cs
+--- a/TravelAgency/Models/BookingModel.cs	
++++ b/TravelAgency/Models/BookingModel.cs	
+@@ -1,23 +1,58 @@
+ using System.ComponentModel.DataAnnotations;
+-using BookingStatus = TravelAgencyWeb.Utils.Enumerations.BookingStatus;
++using BookingStatus = TravelAgency.Utils.Enumerations.BookingStatus;
+ 
+-namespace TravelAgency.Models;
+-
+-public class BookingModel
+-{
+-    public int BookingId { get; set; }
+-    public string? UserId { get; set; }
+-    public int FlightId { get; set; }
+-    public string? UserFirstName { get; set; }
+-    public string? UserLastName { get; set; }
+-    public string? UserPhoneNumber { get; set; }
+-    public string? UserEmail { get; set; }
+-    public string? DepartureCity { get; set; }
+-    public string? DestinationCity { get; set; }
+-    [DataType(DataType.Date)]
+-    public DateTime DepartureTime { get; set; }
+-    public decimal Price { get; set; }
+-    [DataType(DataType.Date)]
+-    public DateTime BookingDate { get; set; }
+-    public BookingStatus Status { get; set; }
+-}
+\ No newline at end of file
++namespace TravelAgency.Models
++{
++    public class BookingModel
++    {
++        public int BookingId { get; init; }
++
++        [Required(ErrorMessage = "User ID is required")]
++        [StringLength(50, ErrorMessage = "User id cannot be longer than 50 characters.")]
++        public string? UserId { get; init; }
++
++        [Required(ErrorMessage = "Flight ID is required")]
++        public int FlightId { get; init; }
++
++        [Required(ErrorMessage = "User first name is required")]
++        [StringLength(100, ErrorMessage = "User first name cannot be longer than 100 characters.")]
++        public string? UserFirstName { get; init; }
++
++        [Required(ErrorMessage = "User last name is required")]
++        [StringLength(100, ErrorMessage = "User last name cannot be longer than 100 characters.")]
++        public string? UserLastName { get; init; }
++
++        [Required(ErrorMessage = "User phone number is required")]
++        [Phone(ErrorMessage = "Invalid phone number format")]
++        [StringLength(12, ErrorMessage = "Phone number cannot be longer than 100 characters.")]
++        public string? UserPhoneNumber { get; init; }
++
++        [Required(ErrorMessage = "User email is required")]
++        [EmailAddress(ErrorMessage = "Invalid email address format")]
++        [StringLength(100, ErrorMessage = "Email cannot be longer than 100 characters.")]
++        public string? UserEmail { get; init; }
++
++        [Required(ErrorMessage = "Departure city is required")]
++        [StringLength(100, ErrorMessage = "Departure city cannot be longer than 100 characters.")]
++        public string? DepartureCity { get; init; }
++
++        [Required(ErrorMessage = "Destination city is required")]
++        [StringLength(100, ErrorMessage = "Destination city cannot be longer than 100 characters.")]
++        public string? DestinationCity { get; init; }
++
++        [Required(ErrorMessage = "Departure time is required")]
++        [DataType(DataType.DateTime, ErrorMessage = "Invalid date format for departure time")]
++        public DateTime DepartureTime { get; init; }
++
++        [Required(ErrorMessage = "Price is required")]
++        [Range(0, double.MaxValue, ErrorMessage = "Price must be a positive value")]
++        public decimal Price { get; init; }
++
++        [Required(ErrorMessage = "Booking date is required")]
++        [DataType(DataType.DateTime, ErrorMessage = "Invalid date format for booking date")]
++        public DateTime BookingDate { get; init; }
++
++        [Required(ErrorMessage = "Booking status is required")]
++        public BookingStatus Status { get; init; }
++    }
++}
+Index: TravelAgency/Models/FlightModel.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using System;\r\nusing System.ComponentModel.DataAnnotations;\r\n\r\nnamespace TravelAgencyWeb.Models\r\n{\r\n    public class FlightModel\r\n    {\r\n        [Required]\r\n        public int FlightId { get; set; }\r\n        \r\n        [Required(ErrorMessage = \"Departure City is required\")]\r\n        public string? DepartureCity { get; set; }\r\n        \r\n        [Required(ErrorMessage = \"Destination City is required\")]\r\n        public string? DestinationCity { get; set; }\r\n        \r\n        [Required]\r\n        [DataType(DataType.Date)]\r\n        public DateTime DepartureTime { get; set; }\r\n        \r\n        [Required]\r\n        [DataType(DataType.Date)]\r\n        public DateTime ArrivalTime { get; set; }\r\n        \r\n        [Required]\r\n        public decimal Price { get; set; }\r\n        \r\n        [Required]\r\n        public bool IsAvailable { get; set; }\r\n        \r\n        [Required(ErrorMessage = \"Description is required\")]\r\n        public string? Description { get; set; }\r\n        \r\n        [Required]\r\n        public string? ImageUrl { get; set; }\r\n    }\r\n}
+===================================================================
+diff --git a/TravelAgency/Models/FlightModel.cs b/TravelAgency/Models/FlightModel.cs
+--- a/TravelAgency/Models/FlightModel.cs	
++++ b/TravelAgency/Models/FlightModel.cs	
+@@ -1,37 +1,43 @@
+-using System;
+ using System.ComponentModel.DataAnnotations;
++using TravelAgency.Utils.Validation;
+ 
+-namespace TravelAgencyWeb.Models
++namespace TravelAgency.Models
+ {
+     public class FlightModel
+     {
+         [Required]
+-        public int FlightId { get; set; }
++        public int FlightId { get; init; }
+         
+         [Required(ErrorMessage = "Departure City is required")]
++        [StringLength(100, ErrorMessage = "Departure City cannot be longer than 100 characters.")]
+         public string? DepartureCity { get; set; }
+         
+         [Required(ErrorMessage = "Destination City is required")]
++        [StringLength(100, ErrorMessage = "Destination City cannot be longer than 100 characters.")]
+         public string? DestinationCity { get; set; }
+         
+-        [Required]
+-        [DataType(DataType.Date)]
++        [Required(ErrorMessage = "Departure Time is required")]
++        [DataType(DataType.DateTime, ErrorMessage = "Invalid date format for Departure Time")]
+         public DateTime DepartureTime { get; set; }
+         
+-        [Required]
+-        [DataType(DataType.Date)]
++        [Required(ErrorMessage = "Arrival Time is required")]
++        [DataType(DataType.DateTime, ErrorMessage = "Invalid date format for Arrival Time")]
++        [DateGreaterThan("DepartureTime", ErrorMessage = "Arrival Time must be later than Departure Time")]
+         public DateTime ArrivalTime { get; set; }
+         
+-        [Required]
++        [Required(ErrorMessage = "Price is required")]
++        [Range(0, double.MaxValue, ErrorMessage = "Price must be a positive value")]
+         public decimal Price { get; set; }
+         
+-        [Required]
++        [Required(ErrorMessage = "Availability status is required")]
+         public bool IsAvailable { get; set; }
+         
+         [Required(ErrorMessage = "Description is required")]
++        [StringLength(1000, ErrorMessage = "Description cannot be longer than 1000 characters.")]
+         public string? Description { get; set; }
+         
+-        [Required]
++        [Required(ErrorMessage = "Image URL is required")]
++        [StringLength(100, ErrorMessage = "ImageUrl cannot be longer than 100 characters.")]
+         public string? ImageUrl { get; set; }
+     }
+ }
+\ No newline at end of file
+Index: TravelAgency/Models/Authentication/LoginViewModel.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using System.ComponentModel.DataAnnotations;\r\n\r\nnamespace TravelAgencyWeb.Models;\r\n\r\npublic class LoginViewModel\r\n{\r\n    [Required]\r\n    [EmailAddress]\r\n    [Display(Name = \"Email\")]\r\n    public string? Email { get; set; }\r\n\r\n    [Required]\r\n    [DataType(DataType.Password)]\r\n    [Display(Name = \"Password\")]\r\n    public string? Password { get; set; }\r\n\r\n    [Display(Name = \"Remember me\")] \r\n    public bool RememberMe { get; set; } = false;\r\n}
+===================================================================
+diff --git a/TravelAgency/Models/Authentication/LoginViewModel.cs b/TravelAgency/Models/Authentication/LoginViewModel.cs
+--- a/TravelAgency/Models/Authentication/LoginViewModel.cs	
++++ b/TravelAgency/Models/Authentication/LoginViewModel.cs	
+@@ -1,19 +1,19 @@
+ using System.ComponentModel.DataAnnotations;
+ 
+-namespace TravelAgencyWeb.Models;
++namespace TravelAgency.Models.Authentication;
+ 
+ public class LoginViewModel
+ {
+     [Required]
+     [EmailAddress]
+     [Display(Name = "Email")]
+-    public string? Email { get; set; }
++    public string? Email { get; init; }
+ 
+     [Required]
+     [DataType(DataType.Password)]
+     [Display(Name = "Password")]
+-    public string? Password { get; set; }
++    public string? Password { get; init; }
+ 
+     [Display(Name = "Remember me")] 
+-    public bool RememberMe { get; set; } = false;
++    public bool RememberMe { get; init; } = false;
+ }
+\ No newline at end of file
+Index: TravelAgency/Data/ApplicationDbContext.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using Microsoft.AspNetCore.Identity.EntityFrameworkCore;\r\nusing Microsoft.EntityFrameworkCore;\r\nusing TravelAgency.Models;\r\nusing TravelAgency.Models.UserRelated;\r\nusing TravelAgencyWeb.Models;\r\n\r\nnamespace TravelAgencyWeb.Data\r\n{\r\n    public class ApplicationDbContext : IdentityDbContext<AccountModel>\r\n    {\r\n        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)\r\n            : base(options)\r\n        {\r\n        }\r\n\r\n        public DbSet<FlightModel> Flights { get; set; }\r\n        public DbSet<BookingModel> Bookings { get; set; }\r\n\r\n        protected override void OnModelCreating(ModelBuilder modelBuilder)\r\n        {\r\n            base.OnModelCreating(modelBuilder);\r\n\r\n            modelBuilder.Entity<BookingModel>()\r\n                .HasKey(b => b.BookingId);\r\n            \r\n            modelBuilder.Entity<BookingModel>()\r\n                .Property(b => b.DepartureTime)\r\n                .HasColumnType(\"date\");\r\n            \r\n            modelBuilder.Entity<BookingModel>()\r\n                .Property(b => b.BookingDate)\r\n                .HasColumnType(\"date\");\r\n            \r\n            modelBuilder.Entity<BookingModel>()\r\n                .Property(f => f.Price)\r\n                .HasColumnType(\"decimal(18, 2)\");\r\n\r\n            modelBuilder.Entity<FlightModel>()\r\n                .HasKey(f => f.FlightId);\r\n\r\n            modelBuilder.Entity<FlightModel>()\r\n                .Property(f => f.DepartureTime)\r\n                .HasColumnType(\"date\");\r\n\r\n            modelBuilder.Entity<FlightModel>()\r\n                .Property(f => f.ArrivalTime)\r\n                .HasColumnType(\"date\");\r\n\r\n            modelBuilder.Entity<FlightModel>()\r\n                .Property(f => f.Price)\r\n                .HasColumnType(\"decimal(18, 2)\");\r\n        }\r\n    }\r\n}
+===================================================================
+diff --git a/TravelAgency/Data/ApplicationDbContext.cs b/TravelAgency/Data/ApplicationDbContext.cs
+--- a/TravelAgency/Data/ApplicationDbContext.cs	
++++ b/TravelAgency/Data/ApplicationDbContext.cs	
+@@ -2,7 +2,6 @@
+ using Microsoft.EntityFrameworkCore;
+ using TravelAgency.Models;
+ using TravelAgency.Models.UserRelated;
+-using TravelAgencyWeb.Models;
+ 
+ namespace TravelAgencyWeb.Data
+ {
+Index: TravelAgency/Models/Authentication/RegisterViewModel.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using System.ComponentModel.DataAnnotations;\r\n\r\nnamespace TravelAgencyWeb.Models;\r\n\r\npublic class RegisterViewModel\r\n{\r\n    [Required]\r\n    [Display(Name = \"First Name\")]\r\n    public string? FirstName { get; set; }\r\n\r\n    [Required]\r\n    [Display(Name = \"Last Name\")]\r\n    public string? LastName { get; set; }\r\n    \r\n    [Required]\r\n    [EmailAddress]\r\n    [Display(Name = \"Email\")]\r\n    public string? Email { get; set; }\r\n\r\n    [Required]\r\n    [Phone]\r\n    [Display(Name = \"Phone\")]\r\n    public string? PhoneNumber { get; set; }\r\n\r\n    [Required]\r\n    [DataType(DataType.Password)]\r\n    [Display(Name = \"Password\")]\r\n    public string? Password { get; set; }\r\n\r\n    [DataType(DataType.Password)]\r\n    [Display(Name = \"Confirm password\")]\r\n    [Compare(\"Password\", ErrorMessage = \"The password and confirmation password do not match.\")]\r\n    public string? ConfirmPassword { get; set; }\r\n}
+===================================================================
+diff --git a/TravelAgency/Models/Authentication/RegisterViewModel.cs b/TravelAgency/Models/Authentication/RegisterViewModel.cs
+--- a/TravelAgency/Models/Authentication/RegisterViewModel.cs	
++++ b/TravelAgency/Models/Authentication/RegisterViewModel.cs	
+@@ -1,6 +1,6 @@
+ using System.ComponentModel.DataAnnotations;
+ 
+-namespace TravelAgencyWeb.Models;
++namespace TravelAgency.Models.Authentication;
+ 
+ public class RegisterViewModel
+ {
+Index: TravelAgency/Models/Search/SearchResultModel.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>namespace TravelAgencyWeb.Models.Search;\r\n\r\npublic class SearchResultModel\r\n{\r\n    public List<FlightModel> Flights { get; set; }\r\n}
+===================================================================
+diff --git a/TravelAgency/Models/Search/SearchResultModel.cs b/TravelAgency/Models/Search/SearchResultModel.cs
+--- a/TravelAgency/Models/Search/SearchResultModel.cs	
++++ b/TravelAgency/Models/Search/SearchResultModel.cs	
+@@ -1,6 +1,6 @@
+-namespace TravelAgencyWeb.Models.Search;
++namespace TravelAgency.Models.Search;
+ 
+ public class SearchResultModel
+ {
+-    public List<FlightModel> Flights { get; set; }
++    public List<FlightModel>? Flights { get; init; }
+ }
+\ No newline at end of file
+Index: TravelAgency/Models/Search/SearchViewModel.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>namespace TravelAgencyWeb.Models.Search;\r\n\r\npublic class SearchViewModel\r\n{\r\n    public string? DepartureCity { get; set; }\r\n    public string? ArrivalCity { get; set; }\r\n    public DateTime DepartureDate { get; set; }\r\n    public int Quantity { get; set; }\r\n}
+===================================================================
+diff --git a/TravelAgency/Models/Search/SearchViewModel.cs b/TravelAgency/Models/Search/SearchViewModel.cs
+--- a/TravelAgency/Models/Search/SearchViewModel.cs	
++++ b/TravelAgency/Models/Search/SearchViewModel.cs	
+@@ -1,9 +1,9 @@
+-namespace TravelAgencyWeb.Models.Search;
++namespace TravelAgency.Models.Search;
+ 
+ public class SearchViewModel
+ {
+-    public string? DepartureCity { get; set; }
+-    public string? ArrivalCity { get; set; }
+-    public DateTime DepartureDate { get; set; }
+-    public int Quantity { get; set; }
++    public string? DepartureCity { get; init; }
++    public string? ArrivalCity { get; init; }
++    public DateTime DepartureDate { get; init; }
++    public int Quantity { get; init; }
+ }
+\ No newline at end of file
+Index: TravelAgency/Models/UserRelated/AccountModel.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using Microsoft.AspNetCore.Identity;\r\nusing UserRole = TravelAgencyWeb.Utils.Enumerations.UserRole;\r\n\r\nnamespace TravelAgency.Models.UserRelated;\r\n\r\npublic class AccountModel : IdentityUser\r\n{\r\n    public string? FirstName { get; set; }\r\n    public string? LastName { get; set; }\r\n    public UserRole Role { get; set; } = 0;\r\n}
+===================================================================
+diff --git a/TravelAgency/Models/UserRelated/AccountModel.cs b/TravelAgency/Models/UserRelated/AccountModel.cs
+--- a/TravelAgency/Models/UserRelated/AccountModel.cs	
++++ b/TravelAgency/Models/UserRelated/AccountModel.cs	
+@@ -1,11 +1,20 @@
++using System.ComponentModel.DataAnnotations;
+ using Microsoft.AspNetCore.Identity;
+-using UserRole = TravelAgencyWeb.Utils.Enumerations.UserRole;
++using UserRole = TravelAgency.Utils.Enumerations.UserRole;
+ 
+-namespace TravelAgency.Models.UserRelated;
+-
+-public class AccountModel : IdentityUser
+-{
+-    public string? FirstName { get; set; }
+-    public string? LastName { get; set; }
+-    public UserRole Role { get; set; } = 0;
++namespace TravelAgency.Models.UserRelated
++{
++    public class AccountModel : IdentityUser
++    {
++        [Required(ErrorMessage = "First name is required")]
++        [StringLength(100, ErrorMessage = "First name cannot be longer than 100 characters")]
++        public string? FirstName { get; set; }
++
++        [Required(ErrorMessage = "Last name is required")]
++        [StringLength(100, ErrorMessage = "Last name cannot be longer than 100 characters")]
++        public string? LastName { get; set; }
++
++        [Required(ErrorMessage = "User role is required")]
++        public UserRole Role { get; set; } = UserRole.User;
++    }
+ }
+\ No newline at end of file
+Index: TravelAgency/Models/UserRelated/AddUserModel.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using System.ComponentModel.DataAnnotations;\r\nusing UserRole = TravelAgencyWeb.Utils.Enumerations.UserRole;\r\n\r\nnamespace TravelAgency.Models.UserRelated;\r\n\r\npublic class AddUserModel\r\n{\r\n    [Required]\r\n    [Display(Name = \"FirstName\")]\r\n    public string? FirstName { get; set; }\r\n\r\n    [Required]\r\n    [Display(Name = \"LastName\")]\r\n    public string? LastName { get; set; }\r\n    \r\n    [Required]\r\n    [Display(Name = \"Email\")]\r\n    public string? Email { get; set; }\r\n\r\n    [Required]\r\n    [Display(Name = \"Phone\")]\r\n    public string? Phone { get; set; }\r\n    \r\n    [Required]\r\n    [StringLength(100, ErrorMessage = \"The {0} must be at least {2} and at max {1} characters long.\", MinimumLength = 8)]\r\n    [Display(Name = \"Password\")]\r\n    public string? Password { get; set; }\r\n\r\n    public UserRole Role { get; set; } = 0;\r\n}
+===================================================================
+diff --git a/TravelAgency/Models/UserRelated/AddUserModel.cs b/TravelAgency/Models/UserRelated/AddUserModel.cs
+--- a/TravelAgency/Models/UserRelated/AddUserModel.cs	
++++ b/TravelAgency/Models/UserRelated/AddUserModel.cs	
+@@ -1,5 +1,5 @@
+ using System.ComponentModel.DataAnnotations;
+-using UserRole = TravelAgencyWeb.Utils.Enumerations.UserRole;
++using UserRole = TravelAgency.Utils.Enumerations.UserRole;
+ 
+ namespace TravelAgency.Models.UserRelated;
+ 
+Index: TravelAgency/Utils/FindBy.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using Microsoft.AspNetCore.Identity;\r\nusing Microsoft.EntityFrameworkCore;\r\nusing TravelAgency.Models.UserRelated;\r\nusing TravelAgencyWeb.Models;\r\n\r\nnamespace TravelAgencyWeb.Utils;\r\n\r\npublic static class FindBy\r\n{\r\n    public static async Task<AccountModel?> FindByEmailAsync(string? email, UserManager<AccountModel> userManager)\r\n    {\r\n        return await userManager.Users.FirstOrDefaultAsync(u => u.Email == email);\r\n    }\r\n}
+===================================================================
+diff --git a/TravelAgency/Utils/FindBy.cs b/TravelAgency/Utils/FindBy.cs
+--- a/TravelAgency/Utils/FindBy.cs	
++++ b/TravelAgency/Utils/FindBy.cs	
+@@ -1,9 +1,8 @@
+ using Microsoft.AspNetCore.Identity;
+ using Microsoft.EntityFrameworkCore;
+ using TravelAgency.Models.UserRelated;
+-using TravelAgencyWeb.Models;
+ 
+-namespace TravelAgencyWeb.Utils;
++namespace TravelAgency.Utils;
+ 
+ public static class FindBy
+ {
+Index: TravelAgency/Models/UserRelated/ChangePasswordViewModel.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using System.ComponentModel.DataAnnotations;\r\n\r\nnamespace TravelAgencyWeb.Models;\r\n\r\npublic class ChangePasswordViewModel\r\n{\r\n    [Required]\r\n    [DataType(DataType.Password)]\r\n    [Display(Name = \"Current password\")]\r\n    public string CurrentPassword { get; set; }\r\n\r\n    [Required]\r\n    [StringLength(100, ErrorMessage = \"The {0} must be at least {2} and at max {1} characters long.\", MinimumLength = 8)]\r\n    [DataType(DataType.Password)]\r\n    [Display(Name = \"New password\")]\r\n    public string NewPassword { get; set; }\r\n\r\n    [DataType(DataType.Password)]\r\n    [Display(Name = \"Confirm new password\")]\r\n    [Compare(\"NewPassword\", ErrorMessage = \"Passwords do not match!\")]\r\n    public string ConfirmPassword { get; set; }\r\n    \r\n    public bool Changed { get; set; } = false;\r\n}
+===================================================================
+diff --git a/TravelAgency/Models/UserRelated/ChangePasswordViewModel.cs b/TravelAgency/Models/UserRelated/ChangePasswordViewModel.cs
+--- a/TravelAgency/Models/UserRelated/ChangePasswordViewModel.cs	
++++ b/TravelAgency/Models/UserRelated/ChangePasswordViewModel.cs	
+@@ -1,24 +1,24 @@
+ using System.ComponentModel.DataAnnotations;
+ 
+-namespace TravelAgencyWeb.Models;
++namespace TravelAgency.Models.UserRelated;
+ 
+ public class ChangePasswordViewModel
+ {
+     [Required]
+     [DataType(DataType.Password)]
+     [Display(Name = "Current password")]
+-    public string CurrentPassword { get; set; }
++    public string? CurrentPassword { get; set; }
+ 
+     [Required]
+     [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 8)]
+     [DataType(DataType.Password)]
+     [Display(Name = "New password")]
+-    public string NewPassword { get; set; }
++    public string? NewPassword { get; set; }
+ 
+     [DataType(DataType.Password)]
+     [Display(Name = "Confirm new password")]
+     [Compare("NewPassword", ErrorMessage = "Passwords do not match!")]
+-    public string ConfirmPassword { get; set; }
++    public string? ConfirmPassword { get; set; }
+     
+     public bool Changed { get; set; } = false;
+ }
+\ No newline at end of file
+Index: TravelAgency/Utils/Interfaces/IAccount.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using Microsoft.AspNetCore.Mvc;\r\n\r\nnamespace TravelAgencyWeb.Utils.Interfaces;\r\n\r\npublic interface IAccount\r\n{\r\n    public IActionResult Register();\r\n    public IActionResult Login(string returnUrl);\r\n    public Task<IActionResult> Logout();\r\n    public IActionResult ChangePassword();\r\n    public Task<IActionResult> ViewProfile();\r\n}
+===================================================================
+diff --git a/TravelAgency/Utils/Interfaces/IAccount.cs b/TravelAgency/Utils/Interfaces/IAccount.cs
+--- a/TravelAgency/Utils/Interfaces/IAccount.cs	
++++ b/TravelAgency/Utils/Interfaces/IAccount.cs	
+@@ -1,6 +1,6 @@
+ using Microsoft.AspNetCore.Mvc;
+ 
+-namespace TravelAgencyWeb.Utils.Interfaces;
++namespace TravelAgency.Utils.Interfaces;
+ 
+ public interface IAccount
+ {
+Index: TravelAgency/Models/UserRelated/ProfileViewModel.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using System.ComponentModel.DataAnnotations;\r\n\r\nnamespace TravelAgencyWeb.Models;\r\n\r\npublic class ProfileViewModel\r\n{\r\n    [Required]\r\n    [Display(Name = \"First Name\")]\r\n    public string? FirstName { get; set; }\r\n\r\n    [Required]\r\n    [Display(Name = \"Last Name\")]\r\n    public string? LastName { get; set; }\r\n    \r\n    [Required]\r\n    [EmailAddress]\r\n    [Display(Name = \"Email\")]\r\n    public string? Email { get; set; }\r\n    \r\n    [Required]\r\n    [Phone]\r\n    [Display(Name = \"Phone number\")]\r\n    public string? PhoneNumber { get; set; }\r\n    \r\n    public bool Changed { get; set; } = false;\r\n}
+===================================================================
+diff --git a/TravelAgency/Models/UserRelated/ProfileViewModel.cs b/TravelAgency/Models/UserRelated/ProfileViewModel.cs
+--- a/TravelAgency/Models/UserRelated/ProfileViewModel.cs	
++++ b/TravelAgency/Models/UserRelated/ProfileViewModel.cs	
+@@ -1,6 +1,6 @@
+ using System.ComponentModel.DataAnnotations;
+ 
+-namespace TravelAgencyWeb.Models;
++namespace TravelAgency.Models.UserRelated;
+ 
+ public class ProfileViewModel
+ {
+Index: TravelAgency/Models/Admin/AdminPanelViewModel.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using TravelAgency.Models.UserRelated;\r\nusing TravelAgencyWeb.Models;\r\n\r\nnamespace TravelAgency.Models.Admin;\r\n\r\npublic class AdminPanelViewModel\r\n{\r\n    public List<AccountModel>? AccModels { get; set; }\r\n    public List<FlightModel>? FlightModels { get; set; }\r\n}
+===================================================================
+diff --git a/TravelAgency/Models/Admin/AdminPanelViewModel.cs b/TravelAgency/Models/Admin/AdminPanelViewModel.cs
+--- a/TravelAgency/Models/Admin/AdminPanelViewModel.cs	
++++ b/TravelAgency/Models/Admin/AdminPanelViewModel.cs	
+@@ -1,10 +1,9 @@
+ using TravelAgency.Models.UserRelated;
+-using TravelAgencyWeb.Models;
+ 
+ namespace TravelAgency.Models.Admin;
+ 
+ public class AdminPanelViewModel
+ {
+-    public List<AccountModel>? AccModels { get; set; }
+-    public List<FlightModel>? FlightModels { get; set; }
++    public List<AccountModel>? AccModels { get; init; }
++    public List<FlightModel>? FlightModels { get; init; }
+ }
+\ No newline at end of file
+Index: TravelAgency/Utils/Interfaces/IAdmin.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using Microsoft.AspNetCore.Mvc;\r\nusing TravelAgencyWeb.Utils.Enumerations;\r\n\r\nnamespace TravelAgencyWeb.Utils.Interfaces;\r\n\r\npublic interface IAdmin\r\n{\r\n    public Task<IActionResult> AdminPanel();\r\n    public Task<IActionResult> AddUser();\r\n    public Task<IActionResult> UpdateUser(string userId, string firstName, string lastName, string email, string phone, UserRole role);\r\n    public Task<IActionResult> DeleteUser(string userId);\r\n    public Task<IActionResult> AddFlight();\r\n    public Task<IActionResult> UpdateFlight(int flightId, string departureCity, string destinationCity, DateTime departureTime, DateTime arrivalTime, decimal price, bool isAvailable, string? imageUrl, string? description);\r\n    public Task<IActionResult> DeleteFlight(int flightId);\r\n}
+===================================================================
+diff --git a/TravelAgency/Utils/Interfaces/IAdmin.cs b/TravelAgency/Utils/Interfaces/IAdmin.cs
+--- a/TravelAgency/Utils/Interfaces/IAdmin.cs	
++++ b/TravelAgency/Utils/Interfaces/IAdmin.cs	
+@@ -1,15 +1,17 @@
+ using Microsoft.AspNetCore.Mvc;
+-using TravelAgencyWeb.Utils.Enumerations;
++using TravelAgency.Models;
++using TravelAgency.Models.UserRelated;
++using TravelAgency.Utils.Enumerations;
+ 
+-namespace TravelAgencyWeb.Utils.Interfaces;
++namespace TravelAgency.Utils.Interfaces;
+ 
+ public interface IAdmin
+ {
+     public Task<IActionResult> AdminPanel();
+-    public Task<IActionResult> AddUser();
++    public Task<IActionResult> AddUser(AddUserModel newUser);
+     public Task<IActionResult> UpdateUser(string userId, string firstName, string lastName, string email, string phone, UserRole role);
+     public Task<IActionResult> DeleteUser(string userId);
+-    public Task<IActionResult> AddFlight();
++    public Task<IActionResult> AddFlight(FlightModel newFlight);
+     public Task<IActionResult> UpdateFlight(int flightId, string departureCity, string destinationCity, DateTime departureTime, DateTime arrivalTime, decimal price, bool isAvailable, string? imageUrl, string? description);
+     public Task<IActionResult> DeleteFlight(int flightId);
+ }
+\ No newline at end of file
+Index: TravelAgency/Utils/Enumerations/Airlines.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>namespace TravelAgencyWeb.Utils.Enumerations;\r\n\r\npublic enum Airlines\r\n{\r\n    Singapore,\r\n    Qatar,\r\n    Emirates,\r\n    Japan,\r\n    Turkish,\r\n    France,\r\n    Cathay,\r\n    EVA,\r\n    Korean,\r\n    Nippon,\r\n}
+===================================================================
+diff --git a/TravelAgency/Utils/Enumerations/Airlines.cs b/TravelAgency/Utils/Enumerations/Airlines.cs
+--- a/TravelAgency/Utils/Enumerations/Airlines.cs	
++++ b/TravelAgency/Utils/Enumerations/Airlines.cs	
+@@ -1,4 +1,4 @@
+-namespace TravelAgencyWeb.Utils.Enumerations;
++namespace TravelAgency.Utils.Enumerations;
+ 
+ public enum Airlines
+ {
+Index: TravelAgency/Views/_ViewImports.cshtml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@using TravelAgencyWeb\r\n@using TravelAgencyWeb.Models\r\n@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+===================================================================
+diff --git a/TravelAgency/Views/_ViewImports.cshtml b/TravelAgency/Views/_ViewImports.cshtml
+--- a/TravelAgency/Views/_ViewImports.cshtml	
++++ b/TravelAgency/Views/_ViewImports.cshtml	
+@@ -1,3 +1,2 @@
+ @using TravelAgencyWeb
+-@using TravelAgencyWeb.Models
+ @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+\ No newline at end of file
+Index: TravelAgency/Utils/Enumerations/BookingStatus.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>namespace TravelAgencyWeb.Utils.Enumerations\r\n{\r\n    public enum BookingStatus\r\n    {\r\n        Confirmed,\r\n        Pending,\r\n        Canceled\r\n    }\r\n}\r\n
+===================================================================
+diff --git a/TravelAgency/Utils/Enumerations/BookingStatus.cs b/TravelAgency/Utils/Enumerations/BookingStatus.cs
+--- a/TravelAgency/Utils/Enumerations/BookingStatus.cs	
++++ b/TravelAgency/Utils/Enumerations/BookingStatus.cs	
+@@ -1,4 +1,4 @@
+-namespace TravelAgencyWeb.Utils.Enumerations
++namespace TravelAgency.Utils.Enumerations
+ {
+     public enum BookingStatus
+     {
+Index: TravelAgency/Utils/Enumerations/Cities.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>namespace TravelAgencyWeb.Utils.Enumerations\r\n{\r\n    public enum Cities\r\n    {\r\n        NewYork,\r\n        LosAngeles,\r\n        Chicago,\r\n        London,\r\n        Paris,\r\n        Tokyo,\r\n        Sydney,\r\n        Dubai,\r\n        Beijing,\r\n        Kyiv,\r\n        Istanbul,\r\n        Rome,\r\n        Madrid,\r\n        Toronto,\r\n        Seoul,\r\n        Berlin,\r\n        Bangkok,\r\n        Singapore,\r\n        Amsterdam,\r\n        HongKong,\r\n        Warsaw\r\n    }\r\n}\r\n
+===================================================================
+diff --git a/TravelAgency/Utils/Enumerations/Cities.cs b/TravelAgency/Utils/Enumerations/Cities.cs
+--- a/TravelAgency/Utils/Enumerations/Cities.cs	
++++ b/TravelAgency/Utils/Enumerations/Cities.cs	
+@@ -1,4 +1,4 @@
+-namespace TravelAgencyWeb.Utils.Enumerations
++namespace TravelAgency.Utils.Enumerations
+ {
+     public enum Cities
+     {
+Index: TravelAgency/Views/Home/Index.cshtml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!-- Index.cshtml -->\r\n@model TravelAgencyWeb.Models.Search.SearchViewModel\r\n\r\n<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n    <meta charset=\"utf-8\" />\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\r\n    <title>Welcome!</title>\r\n    <link rel=\"stylesheet\" href=\"~/css/index.css\" asp-append-version=\"true\"/>\r\n    \r\n</head>\r\n<body>\r\n\r\n<h1>Discover your next adventure. Find unbeatable deals.</h1>\r\n\r\n\r\n<!-- Search Section -->\r\n<div class=\"search-section-centered\">\r\n    <section class=\"search-section\">\r\n        <h2>Find Your Flight</h2>\r\n        <form asp-controller=\"Home\" asp-action=\"Search\" method=\"post\" class=\"form-style\">\r\n            <div class=\"search-section-element\">\r\n                <label for=\"DepartureCity\">Departure City</label>\r\n                <select id=\"DepartureCity\" name=\"DepartureCity\" class=\"form-control\" onchange=\"updateCitiesOptions('DepartureCity', 'ArrivalCity')\">\r\n                    <option disabled selected>Departure City</option>\r\n                    @foreach (var city in Enum.GetValues(typeof(TravelAgencyWeb.Utils.Enumerations.Cities)))\r\n                    {\r\n                    <option value=\"@city\">@city</option>\r\n                    }\r\n                </select>\r\n            </div>\r\n            <div class=\"search-section-element\">\r\n                <label for=\"ArrivalCity\">Destination City</label>\r\n                <select id=\"ArrivalCity\" name=\"ArrivalCity\" class=\"form-control\" onchange=\"updateCitiesOptions('ArrivalCity', 'DepartureCity')\">\r\n                    <option disabled selected>Destination City</option>\r\n                    @foreach (var city in Enum.GetValues(typeof(TravelAgencyWeb.Utils.Enumerations.Cities)))\r\n                    {\r\n                    <option value=\"@city\">@city</option>\r\n                    }\r\n                </select>\r\n            </div>\r\n            <div class=\"search-section-element\">\r\n                <label for=\"DepartureDate\">Departure Date</label>\r\n                <input id=\"DepartureDate\" type=\"date\" name=\"DepartureDate\" value=\"@Model.DepartureDate.ToString(\"yyyy-MM-dd\")\" min=\"@DateTime.Today.ToString(\"yyyy-MM-dd\")\">\r\n            </div>\r\n            <div class=\"search-section-element\">\r\n                <label id=\"Quantity\" for=\"Quantity\">Quantity</label>\r\n                <input type=\"number\" name=\"Quantity\" placeholder=\"Quantity of Persons\" value=\"1\" min=\"1\" max=\"9\">\r\n            </div>\r\n            <div class=\"search-section-element btn-element\">\r\n                <button type=\"submit\">Search</button>\r\n            </div>\r\n        </form>\r\n    </section>\r\n</div>\r\n\r\n<section class=\"content\">\r\n    <section class=\"popular-destinations\">\r\n        <h2>Popular Destinations</h2>\r\n        <div class=\"destination-grid\">\r\n            <div class=\"destination\">\r\n                <img src=\"~/lib/images/Amsterdam.jpg\" alt=\"Amsterdam\">\r\n                <h3>Amsterdam</h3>\r\n            </div>\r\n            <div class=\"destination\">\r\n                <img src=\"~/lib/images/NewYork.jpg\" alt=\"NewYork\">\r\n                <h3>New York</h3>\r\n            </div>\r\n            <div class=\"destination\">\r\n                <img src=\"~/lib/images/Madrid.jpg\" alt=\"Madrid\">\r\n                <h3>Madrid</h3>\r\n            </div>\r\n            <div class=\"destination\">\r\n                <img src=\"~/lib/images/London.jpg\" alt=\"London\">\r\n                <h3>London</h3>\r\n            </div>\r\n            <div class=\"destination\">\r\n                <img src=\"~/lib/images/Kyiv.jpg\" alt=\"Kyiv\">\r\n                <h3>Kyiv</h3>\r\n            </div>\r\n            <div class=\"destination\">\r\n                <img src=\"~/lib/images/Berlin.jpg\" alt=\"Berlin\">\r\n                <h3>Berlin</h3>\r\n            </div>\r\n        </div>\r\n    </section>\r\n    <section class=\"top-airlines\">\r\n        <h2>Top 10 Airlines</h2>\r\n        <ul>\r\n            <li>Singapore Airlines</li>\r\n            <li>Qatar Airways</li>\r\n            <li>ANA All Nippon Airways</li>\r\n            <li>Emirates</li>\r\n            <li>Japan Airlines</li>\r\n            <li>Turkish Airlines</li>\r\n            <li>Air France</li>\r\n            <li>Cathay Pacific Airways</li>\r\n            <li>EVA Air</li>\r\n            <li>Korean  Air</li>\r\n        </ul>\r\n    </section>\r\n</section>\r\n\r\n</body>\r\n<script src=\"~/js/index.js\"></script>\r\n\r\n</html>\r\n
+===================================================================
+diff --git a/TravelAgency/Views/Home/Index.cshtml b/TravelAgency/Views/Home/Index.cshtml
+--- a/TravelAgency/Views/Home/Index.cshtml	
++++ b/TravelAgency/Views/Home/Index.cshtml	
+@@ -1,5 +1,6 @@
+ <!-- Index.cshtml -->
+-@model TravelAgencyWeb.Models.Search.SearchViewModel
++@using TravelAgency.Utils.Enumerations
++@model TravelAgency.Models.Search.SearchViewModel
+ 
+ <!DOCTYPE html>
+ <html lang="en">
+@@ -24,7 +25,7 @@
+                 <label for="DepartureCity">Departure City</label>
+                 <select id="DepartureCity" name="DepartureCity" class="form-control" onchange="updateCitiesOptions('DepartureCity', 'ArrivalCity')">
+                     <option disabled selected>Departure City</option>
+-                    @foreach (var city in Enum.GetValues(typeof(TravelAgencyWeb.Utils.Enumerations.Cities)))
++                    @foreach (var city in Enum.GetValues(typeof(Cities)))
+                     {
+                     <option value="@city">@city</option>
+                     }
+@@ -34,7 +35,7 @@
+                 <label for="ArrivalCity">Destination City</label>
+                 <select id="ArrivalCity" name="ArrivalCity" class="form-control" onchange="updateCitiesOptions('ArrivalCity', 'DepartureCity')">
+                     <option disabled selected>Destination City</option>
+-                    @foreach (var city in Enum.GetValues(typeof(TravelAgencyWeb.Utils.Enumerations.Cities)))
++                    @foreach (var city in Enum.GetValues(typeof(Cities)))
+                     {
+                     <option value="@city">@city</option>
+                     }
+Index: TravelAgency/Utils/Enumerations/UserRole.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>namespace TravelAgencyWeb.Utils.Enumerations\r\n{\r\n    public enum UserRole\r\n    {\r\n        User,\r\n        Admin\r\n    }\r\n}\r\n
+===================================================================
+diff --git a/TravelAgency/Utils/Enumerations/UserRole.cs b/TravelAgency/Utils/Enumerations/UserRole.cs
+--- a/TravelAgency/Utils/Enumerations/UserRole.cs	
++++ b/TravelAgency/Utils/Enumerations/UserRole.cs	
+@@ -1,4 +1,4 @@
+-namespace TravelAgencyWeb.Utils.Enumerations
++namespace TravelAgency.Utils.Enumerations
+ {
+     public enum UserRole
+     {
+Index: TravelAgency/Views/Shared/Error.cshtml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@model ErrorViewModel\r\n@{\r\n    ViewData[\"Title\"] = \"Error\";\r\n}\r\n\r\n<h1 class=\"text-danger\">Error.</h1>\r\n<h2 class=\"text-danger\">An error occurred while processing your request.</h2>\r\n\r\n@if (Model.ShowRequestId)\r\n{\r\n    <p>\r\n        <strong>Request ID:</strong> <code>@Model.RequestId</code>\r\n    </p>\r\n}\r\n\r\n<h3>Development Mode</h3>\r\n<p>\r\n    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.\r\n</p>\r\n<p>\r\n    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>\r\n    It can result in displaying sensitive information from exceptions to end users.\r\n    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>\r\n    and restarting the app.\r\n</p>
+===================================================================
+diff --git a/TravelAgency/Views/Shared/Error.cshtml b/TravelAgency/Views/Shared/Error.cshtml
+--- a/TravelAgency/Views/Shared/Error.cshtml	
++++ b/TravelAgency/Views/Shared/Error.cshtml	
+@@ -1,4 +1,4 @@
+-@model ErrorViewModel
++@model TravelAgency.Models.ErrorViewModel
+ @{
+     ViewData["Title"] = "Error";
+ }
+Index: TravelAgency/obj/rider.project.model.nuget.info
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>17156211064556249
+===================================================================
+diff --git a/TravelAgency/obj/rider.project.model.nuget.info b/TravelAgency/obj/rider.project.model.nuget.info
+--- a/TravelAgency/obj/rider.project.model.nuget.info	
++++ b/TravelAgency/obj/rider.project.model.nuget.info	
+@@ -1,1 +1,1 @@
+-17156211064556249
+\ No newline at end of file
++17157787606992538
+\ No newline at end of file
+Index: TravelAgency/Models/ErrorViewModel.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>namespace TravelAgencyWeb.Models;\r\n\r\npublic class ErrorViewModel\r\n{\r\n    public string? RequestId { get; set; }\r\n\r\n    public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);\r\n}
+===================================================================
+diff --git a/TravelAgency/Models/ErrorViewModel.cs b/TravelAgency/Models/ErrorViewModel.cs
+--- a/TravelAgency/Models/ErrorViewModel.cs	
++++ b/TravelAgency/Models/ErrorViewModel.cs	
+@@ -1,4 +1,4 @@
+-namespace TravelAgencyWeb.Models;
++namespace TravelAgency.Models;
+ 
+ public class ErrorViewModel
+ {
+Index: TravelAgency/Views/Account/ChangePassword.cshtml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@using Microsoft.AspNetCore.Identity\r\n@using TravelAgency.Models.UserRelated\r\n@inject SignInManager<AccountModel> SignInManager\r\n@inject UserManager<AccountModel> UserManager\r\n@model TravelAgencyWeb.Models.ChangePasswordViewModel\r\n@{\r\n    ViewData[\"Title\"] = \"Change Password\";\r\n}\r\n\r\n<link rel=\"stylesheet\" href=\"~/css/change-password.css\" asp-append-version=\"true\"/>\r\n\r\n<div class=\"container-change-password\">\r\n    <div class=\"row\">\r\n        <div class=\"col-md-2 offset-md-2\">\r\n            <div class=\"nav-links\">\r\n                <div class=\"mb-2\">\r\n                    <a class=\"btn btn-primary\" asp-controller=\"Account\" asp-action=\"ViewProfile\">Profile</a>\r\n                </div>\r\n                <div class=\"mb-2\">\r\n                    <a class=\"btn btn-primary\" asp-controller=\"Account\" asp-action=\"ChangePassword\">Change Password</a>\r\n                </div>\r\n                <div class=\"mb-2\">\r\n                    <a class=\"btn btn-primary\" asp-controller=\"Account\" asp-action=\"ViewBookings\">Bookings</a>\r\n                </div>\r\n                @{\r\n                var user = await UserManager.GetUserAsync(User);\r\n                if (user!.Role == TravelAgencyWeb.Utils.Enumerations.UserRole.Admin)\r\n                {\r\n                <div>\r\n                    <a class=\"btn btn-primary\" asp-controller=\"Admin\" asp-action=\"AdminPanel\">Admin Panel</a>\r\n                </div>\r\n                }\r\n                }\r\n            </div>\r\n        </div>\r\n        \r\n        <div class=\"col-md-6\">\r\n            <h2>Change Password</h2>\r\n\r\n            <form asp-controller=\"Account\" asp-action=\"ChangePassword\" method=\"post\">\r\n                <div asp-validation-summary=\"All\" class=\"text-danger\"></div>\r\n                <div class=\"form-group\">\r\n                    <label asp-for=\"CurrentPassword\"></label>\r\n                    <input asp-for=\"CurrentPassword\" class=\"form-control\" />\r\n                    <span asp-validation-for=\"CurrentPassword\" class=\"text-danger\"></span>\r\n                </div>\r\n                <div class=\"form-group\">\r\n                    <label asp-for=\"NewPassword\"></label>\r\n                    <input asp-for=\"NewPassword\" class=\"form-control\" />\r\n                    <span asp-validation-for=\"NewPassword\" class=\"text-danger\"></span>\r\n                </div>\r\n                <div class=\"form-group mb-2\">\r\n                    <label asp-for=\"ConfirmPassword\"></label>\r\n                    <input asp-for=\"ConfirmPassword\" class=\"form-control\" />\r\n                    <span asp-validation-for=\"ConfirmPassword\" class=\"text-danger\"></span>\r\n                </div>\r\n                <button type=\"submit\" class=\"btn btn-primary\">Save</button>\r\n            </form>\r\n\r\n            @if (Model.Changed)\r\n            {\r\n                <div class=\"alert alert-success\" role=\"alert\">\r\n                    Your password was successfully changed.\r\n                </div>\r\n\r\n                <p>\r\n                    <a asp-controller=\"Home\" asp-action=\"Index\">Back to Home</a>\r\n                </p>\r\n            }\r\n        </div>\r\n    </div>\r\n</div>
+===================================================================
+diff --git a/TravelAgency/Views/Account/ChangePassword.cshtml b/TravelAgency/Views/Account/ChangePassword.cshtml
+--- a/TravelAgency/Views/Account/ChangePassword.cshtml	
++++ b/TravelAgency/Views/Account/ChangePassword.cshtml	
+@@ -1,8 +1,9 @@
+ @using Microsoft.AspNetCore.Identity
+ @using TravelAgency.Models.UserRelated
++@using TravelAgency.Utils.Enumerations
+ @inject SignInManager<AccountModel> SignInManager
+ @inject UserManager<AccountModel> UserManager
+-@model TravelAgencyWeb.Models.ChangePasswordViewModel
++@model ChangePasswordViewModel
+ @{
+     ViewData["Title"] = "Change Password";
+ }
+@@ -24,7 +25,7 @@
+                 </div>
+                 @{
+                 var user = await UserManager.GetUserAsync(User);
+-                if (user!.Role == TravelAgencyWeb.Utils.Enumerations.UserRole.Admin)
++                if (user!.Role == UserRole.Admin)
+                 {
+                 <div>
+                     <a class="btn btn-primary" asp-controller="Admin" asp-action="AdminPanel">Admin Panel</a>
+Index: TravelAgency/Views/Account/Login.cshtml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!-- Login.cshtml -->\r\n@model TravelAgencyWeb.Models.LoginViewModel\r\n@{\r\n    ViewData[\"Title\"] = \"Log in\";\r\n}\r\n\r\n<link rel=\"stylesheet\" href=\"~/css/login.css\" asp-append-version=\"true\"/>\r\n\r\n<div class=\"container-login\">\r\n<h2>@ViewData[\"Title\"]</h2>\r\n<form asp-controller=\"Account\" asp-action=\"Login\" method=\"post\" class=\"form-horizontal login-form\" role=\"form\">\r\n    <div asp-validation-summary=\"ModelOnly\" class=\"text-danger\"></div>\r\n    <div class=\"form-group\">\r\n        <label asp-for=\"Email\" class=\"control-label\"></label>\r\n        <input asp-for=\"Email\" class=\"form-control\" />\r\n        <span asp-validation-for=\"Email\" class=\"text-danger\"></span>\r\n    </div>\r\n    <div class=\"form-group mb-2\">\r\n        <label asp-for=\"Password\" class=\"control-label\"></label>\r\n        <input asp-for=\"Password\" class=\"form-control\" />\r\n        <span asp-validation-for=\"Password\" class=\"text-danger\"></span>\r\n    </div>\r\n    <div class=\"form-group mb-2\">\r\n        <div class=\"checkbox\">\r\n            <label class=\"checkbox-label\">\r\n                <input asp-for=\"RememberMe\" class=\"form-check-input\" type=\"checkbox\" /> @Html.DisplayNameFor(m => m.RememberMe)\r\n            </label>\r\n        </div>\r\n    </div>\r\n    <div class=\"form-group\">\r\n        <button type=\"submit\" class=\"btn btn-primary\">Log in</button>\r\n    </div>\r\n</form>\r\n</div>\r\n
+===================================================================
+diff --git a/TravelAgency/Views/Account/Login.cshtml b/TravelAgency/Views/Account/Login.cshtml
+--- a/TravelAgency/Views/Account/Login.cshtml	
++++ b/TravelAgency/Views/Account/Login.cshtml	
+@@ -1,5 +1,4 @@
+-<!-- Login.cshtml -->
+-@model TravelAgencyWeb.Models.LoginViewModel
++@model TravelAgency.Models.Authentication.LoginViewModel
+ @{
+     ViewData["Title"] = "Log in";
+ }
+Index: TravelAgency/Views/Account/Register.cshtml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!-- Register.cshtml -->\r\n@model TravelAgencyWeb.Models.RegisterViewModel\r\n@{\r\nViewData[\"Title\"] = \"Register\";\r\n}\r\n\r\n<link rel=\"stylesheet\" href=\"~/css/registration.css\" asp-append-version=\"true\"/>\r\n\r\n<div class=\"container-registration\">\r\n    <h2>@ViewData[\"Title\"]</h2>\r\n    <form asp-controller=\"Account\" asp-action=\"Register\" method=\"post\" class=\"form-horizontal registration-form\" role=\"form\">\r\n        <div asp-validation-summary=\"ModelOnly\" class=\"text-danger\"></div>\r\n        <div class=\"form-group\">\r\n            <label asp-for=\"FirstName\" class=\"control-label\">First Name:</label>\r\n            <input asp-for=\"FirstName\" class=\"form-control\" />\r\n            <span asp-validation-for=\"FirstName\" class=\"text-danger\"></span>\r\n        </div>\r\n        <div class=\"form-group\">\r\n            <label asp-for=\"LastName\" class=\"control-label\">Last Name:</label>\r\n            <input asp-for=\"LastName\" class=\"form-control\" />\r\n            <span asp-validation-for=\"LastName\" class=\"text-danger\"></span>\r\n        </div>\r\n        <div class=\"form-group\">\r\n            <label asp-for=\"Email\" class=\"control-label\">Email:</label>\r\n            <input asp-for=\"Email\" class=\"form-control\" />\r\n            <span asp-validation-for=\"Email\" class=\"text-danger\"></span>\r\n        </div>\r\n        <div class=\"form-group\">\r\n            <label asp-for=\"PhoneNumber\" class=\"control-label\">Phone Number:</label>\r\n            <input asp-for=\"PhoneNumber\" class=\"form-control\" />\r\n            <span asp-validation-for=\"PhoneNumber\" class=\"text-danger\"></span>\r\n        </div>\r\n        <div class=\"form-group\">\r\n            <label asp-for=\"Password\" class=\"control-label\">Password:</label>\r\n            <input asp-for=\"Password\" type=\"password\" class=\"form-control\" />\r\n            <span asp-validation-for=\"Password\" class=\"text-danger\"></span>\r\n        </div>\r\n        <div class=\"form-group mb-2\">\r\n            <label asp-for=\"ConfirmPassword\" class=\"control-label\">Confirm Password:</label>\r\n            <input asp-for=\"ConfirmPassword\" type=\"password\" class=\"form-control\" />\r\n            <span asp-validation-for=\"ConfirmPassword\" class=\"text-danger\"></span>\r\n        </div>\r\n        <div class=\"form-group\">\r\n            <button type=\"submit\" class=\"btn btn-primary\">Register</button>\r\n        </div>\r\n    </form>\r\n</div>\r\n
+===================================================================
+diff --git a/TravelAgency/Views/Account/Register.cshtml b/TravelAgency/Views/Account/Register.cshtml
+--- a/TravelAgency/Views/Account/Register.cshtml	
++++ b/TravelAgency/Views/Account/Register.cshtml	
+@@ -1,5 +1,5 @@
+ <!-- Register.cshtml -->
+-@model TravelAgencyWeb.Models.RegisterViewModel
++@model TravelAgency.Models.Authentication.RegisterViewModel
+ @{
+ ViewData["Title"] = "Register";
+ }
+Index: TravelAgency/Views/Account/ViewBookings.cshtml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@using Microsoft.AspNetCore.Identity\r\n@using TravelAgency.Models.UserRelated\r\n@inject SignInManager<AccountModel> SignInManager\r\n@inject UserManager<AccountModel> UserManager\r\n@model List<TravelAgency.Models.BookingModel>\r\n\r\n@{\r\nViewData[\"Title\"] = \"View Bookings\";\r\n}\r\n\r\n<link rel=\"stylesheet\" href=\"~/css/view-bookings.css\" asp-append-version=\"true\"/>\r\n\r\n<div class=\"container\">\r\n    <div class=\"row\">\r\n        <div class=\"col-md-2 offset-md-2\">\r\n            <div class=\"nav-links\">\r\n                <div class=\"mb-2\">\r\n                    <a class=\"btn btn-primary\" asp-controller=\"Account\" asp-action=\"ViewProfile\">Profile</a>\r\n                </div>\r\n                <div class=\"mb-2\">\r\n                    <a class=\"btn btn-primary\" asp-controller=\"Account\" asp-action=\"ChangePassword\">Change Password</a>\r\n                </div>\r\n                <div class=\"mb-2\">\r\n                    <a class=\"btn btn-primary\" asp-controller=\"Account\" asp-action=\"ViewBookings\">Bookings</a>\r\n                </div>\r\n                @{\r\n                var user = await UserManager.GetUserAsync(User);\r\n                if (user!.Role == TravelAgencyWeb.Utils.Enumerations.UserRole.Admin)\r\n                {\r\n                <div>\r\n                    <a class=\"btn btn-primary\" asp-controller=\"Admin\" asp-action=\"AdminPanel\">Admin Panel</a>\r\n                </div>\r\n                }\r\n                }\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"view-bookings\">\r\n            <h2>View Bookings</h2>\r\n\r\n            @if (Model.Any())\r\n            {\r\n            <table class=\"table\">\r\n                <thead>\r\n                <tr>\r\n                    <th>Booking ID</th>\r\n                    <th>Flight</th>\r\n                    <th>Booking Date</th>\r\n                    <th>Status</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                @foreach (var booking in Model)\r\n                {\r\n                <tr>\r\n                    <td>@booking.BookingId</td>\r\n                    <td>@booking.DepartureCity to @booking.DestinationCity</td>\r\n                    <td>@booking.BookingDate.ToShortDateString()</td>\r\n                    <td>@booking.Status</td>\r\n                </tr>\r\n                }\r\n                </tbody>\r\n            </table>\r\n            }\r\n            else\r\n            {\r\n            <p>No bookings found.</p>\r\n            }\r\n        </div>\r\n    </div>\r\n</div>\r\n
+===================================================================
+diff --git a/TravelAgency/Views/Account/ViewBookings.cshtml b/TravelAgency/Views/Account/ViewBookings.cshtml
+--- a/TravelAgency/Views/Account/ViewBookings.cshtml	
++++ b/TravelAgency/Views/Account/ViewBookings.cshtml	
+@@ -1,5 +1,6 @@
+ @using Microsoft.AspNetCore.Identity
+ @using TravelAgency.Models.UserRelated
++@using TravelAgency.Utils.Enumerations
+ @inject SignInManager<AccountModel> SignInManager
+ @inject UserManager<AccountModel> UserManager
+ @model List<TravelAgency.Models.BookingModel>
+@@ -25,7 +26,7 @@
+                 </div>
+                 @{
+                 var user = await UserManager.GetUserAsync(User);
+-                if (user!.Role == TravelAgencyWeb.Utils.Enumerations.UserRole.Admin)
++                if (user!.Role == UserRole.Admin)
+                 {
+                 <div>
+                     <a class="btn btn-primary" asp-controller="Admin" asp-action="AdminPanel">Admin Panel</a>
+Index: TravelAgency/Views/Account/ViewProfile.cshtml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@using Microsoft.AspNetCore.Identity\r\n@using TravelAgency.Models.UserRelated\r\n@inject SignInManager<AccountModel> SignInManager\r\n@inject UserManager<AccountModel> UserManager\r\n@model TravelAgencyWeb.Models.ProfileViewModel\r\n\r\n<link rel=\"stylesheet\" href=\"~/css/view-profile.css\" asp-append-version=\"true\"/>\r\n\r\n<div class=\"container\">\r\n    <div class=\"row\">\r\n        <div class=\"col-md-2 offset-md-2\">\r\n            <div class=\"nav-links\">\r\n                <div class=\"mb-2\">\r\n                    <a class=\"btn btn-primary\" asp-controller=\"Account\" asp-action=\"ViewProfile\">Profile</a>\r\n                </div>\r\n                <div class=\"mb-2\">\r\n                    <a class=\"btn btn-primary\" asp-controller=\"Account\" asp-action=\"ChangePassword\">Change Password</a>\r\n                </div>\r\n                <div class=\"mb-2\">\r\n                    <a class=\"btn btn-primary\" asp-controller=\"Account\" asp-action=\"ViewBookings\">Bookings</a>\r\n                </div>\r\n                @{\r\n                    var user = await UserManager.GetUserAsync(User);\r\n                    if (user!.Role == TravelAgencyWeb.Utils.Enumerations.UserRole.Admin)\r\n                    {\r\n                        <div>\r\n                            <a class=\"btn btn-primary\" asp-controller=\"Admin\" asp-action=\"AdminPanel\">Admin Panel</a>\r\n                        </div>\r\n                    }\r\n                }\r\n            </div>\r\n        </div>\r\n        \r\n        <div class=\"col-md-6\">\r\n            <h2>Profile info</h2>\r\n\r\n            <form method=\"post\">\r\n                <div class=\"form-group\">\r\n                    <label asp-for=\"FirstName\" class=\"control-label\"></label>\r\n                    <input asp-for=\"FirstName\" class=\"form-control\" />\r\n                    <span asp-validation-for=\"FirstName\" class=\"text-danger\"></span>\r\n                </div>\r\n                <div class=\"form-group\">\r\n                    <label asp-for=\"LastName\" class=\"control-label\"></label>\r\n                    <input asp-for=\"LastName\" class=\"form-control\" />\r\n                    <span asp-validation-for=\"LastName\" class=\"text-danger\"></span>\r\n                </div>\r\n                <div class=\"form-group\">\r\n                    <label asp-for=\"Email\" class=\"control-label\"></label>\r\n                    <input asp-for=\"Email\" class=\"form-control\" />\r\n                    <span asp-validation-for=\"Email\" class=\"text-danger\"></span>\r\n                </div>\r\n                <div class=\"form-group\">\r\n                    <label asp-for=\"PhoneNumber\" class=\"control-label\"></label>\r\n                    <input asp-for=\"PhoneNumber\" class=\"form-control\" />\r\n                    <span asp-validation-for=\"PhoneNumber\" class=\"text-danger\"></span>\r\n                </div>\r\n                <button type=\"submit\" class=\"btn btn-primary\">Save</button>\r\n            </form>\r\n\r\n            @if (Model.Changed)\r\n            {\r\n                <div class=\"alert alert-success\" role=\"alert\">\r\n                    Profile information has been successfully updated.\r\n                </div>\r\n\r\n                <p>\r\n                    <a asp-controller=\"Home\" asp-action=\"Index\">Back to Home</a>\r\n                </p>\r\n            }\r\n        </div>\r\n    </div>\r\n</div>
+===================================================================
+diff --git a/TravelAgency/Views/Account/ViewProfile.cshtml b/TravelAgency/Views/Account/ViewProfile.cshtml
+--- a/TravelAgency/Views/Account/ViewProfile.cshtml	
++++ b/TravelAgency/Views/Account/ViewProfile.cshtml	
+@@ -1,8 +1,9 @@
+ @using Microsoft.AspNetCore.Identity
+ @using TravelAgency.Models.UserRelated
++@using TravelAgency.Utils.Enumerations
+ @inject SignInManager<AccountModel> SignInManager
+ @inject UserManager<AccountModel> UserManager
+-@model TravelAgencyWeb.Models.ProfileViewModel
++@model ProfileViewModel
+ 
+ <link rel="stylesheet" href="~/css/view-profile.css" asp-append-version="true"/>
+ 
+@@ -21,7 +22,7 @@
+                 </div>
+                 @{
+                     var user = await UserManager.GetUserAsync(User);
+-                    if (user!.Role == TravelAgencyWeb.Utils.Enumerations.UserRole.Admin)
++                    if (user!.Role == UserRole.Admin)
+                     {
+                         <div>
+                             <a class="btn btn-primary" asp-controller="Admin" asp-action="AdminPanel">Admin Panel</a>
+Index: TravelAgency/Views/Search/SearchResult.cshtml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@using System.Text.Json\r\n@using Microsoft.AspNetCore.Mvc.TagHelpers\r\n@model TravelAgencyWeb.Models.Search.SearchResultModel\r\n\r\n@{\r\nViewData[\"Title\"] = \"Search Results\";\r\n}\r\n<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n    <meta charset=\"utf-8\" />\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\r\n    <title>Search Result</title>\r\n    <link rel=\"stylesheet\" href=\"~/css/search-result.css\" asp-append-version=\"true\"/>\r\n</head>\r\n<body>\r\n\r\n<h1>Search Results</h1>\r\n<div class=\"table-container\">\r\n    @if (Model.Flights.Any())\r\n    {\r\n        <table class=\"table\">\r\n            <thead>\r\n            <tr>\r\n                <th>Departure City</th>\r\n                <th>Destination City</th>\r\n                <th>Departure Date</th>\r\n                <th>Arrival Date</th>\r\n                <th>Price</th>\r\n                <th class=\"description-cell\">Description</th>\r\n                <th>Image</th>\r\n                <th></th>\r\n            </tr>\r\n            </thead>\r\n            <tbody>\r\n            @foreach (var flight in Model.Flights)\r\n            {\r\n                <tr>\r\n                    <td>@flight.DepartureCity</td>\r\n                    <td>@flight.DestinationCity</td>\r\n                    <td>@flight.DepartureTime.ToString(\"dd/MM/yyyy\")</td>\r\n                    <td>@flight.ArrivalTime.ToString(\"dd/MM/yyyy\")</td>\r\n                    <td><text>$</text>@flight.Price </td>\r\n                    <td class=\"description-cell\">@flight.Description</td>\r\n                    <td><img src=\"@flight.ImageUrl\" alt=\"Flight Image\" style=\"max-width: 100px; max-height: 100px;\" loading=\"lazy\"/></td>\r\n                    <td>\r\n                        <form method=\"post\" asp-action=\"ConfirmBooking\" asp-controller=\"Booking\">\r\n                            <input type=\"hidden\" name=\"flightJson\" value=\"@JsonSerializer.Serialize(flight)\" />\r\n                            <button type=\"submit\" class=\"book-button\">Book</button>\r\n                        </form>\r\n                    </td>\r\n                </tr>\r\n            }\r\n            </tbody>\r\n        </table>\r\n    }\r\n    else\r\n    {\r\n        <p>No flights available matching your search criteria.</p>\r\n    }\r\n</div>\r\n\r\n</body>\r\n</html>
+===================================================================
+diff --git a/TravelAgency/Views/Search/SearchResult.cshtml b/TravelAgency/Views/Search/SearchResult.cshtml
+--- a/TravelAgency/Views/Search/SearchResult.cshtml	
++++ b/TravelAgency/Views/Search/SearchResult.cshtml	
+@@ -1,6 +1,6 @@
+ @using System.Text.Json
+ @using Microsoft.AspNetCore.Mvc.TagHelpers
+-@model TravelAgencyWeb.Models.Search.SearchResultModel
++@model TravelAgency.Models.Search.SearchResultModel
+ 
+ @{
+ ViewData["Title"] = "Search Results";
+Index: TravelAgency/Views/Admin/AddFlight.cshtml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@using Microsoft.AspNetCore.Identity\r\n@using TravelAgency.Models.UserRelated\r\n@inject UserManager<AccountModel> UserManager\r\n@{\r\n    ViewData[\"Title\"] = \"Add Flight\";\r\n}\r\n\r\n@model FlightModel\r\n\r\n<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n    <meta charset=\"utf-8\" />\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\r\n    <title>@ViewData[\"Title\"]</title>\r\n    <link rel=\"stylesheet\" href=\"~/css/add-flight.css\" asp-append-version=\"true\"/>\r\n</head>\r\n<body>\r\n\r\n@{\r\n    var currentUser = await UserManager.GetUserAsync(User);\r\n\r\n    if (currentUser!.Role == TravelAgencyWeb.Utils.Enumerations.UserRole.Admin)\r\n    {\r\n\r\n        <div class=\"container-add-flight\">\r\n            <h2>@ViewData[\"Title\"]</h2>\r\n            <form asp-controller=\"Admin\" asp-action=\"AddFlight\" method=\"post\" class=\"form-horizontal\" role=\"form\">\r\n                <div asp-validation-summary=\"ModelOnly\" class=\"text-danger\"></div>\r\n                <div class=\"form-group\">\r\n                    <label for=\"DepartureCity\" class=\"control-label\">Departure City</label>\r\n                    <select id=\"DepartureCity\" name=\"DepartureCity\" class=\"form-control\" onchange=\"updateCitiesOptions('DepartureCity', 'ArrivalCity')\">\r\n                        <option disabled selected>Select Departure City</option>\r\n                        @foreach (var city in Enum.GetValues(typeof(TravelAgencyWeb.Utils.Enumerations.Cities)))\r\n                        {\r\n                        <option value=\"@city\">@city</option>\r\n                        }\r\n                    </select>\r\n                    <span asp-validation-for=\"DepartureCity\" class=\"text-danger\"></span>\r\n                </div>\r\n\r\n                <div class=\"form-group\">\r\n                    <label for=\"DestinationCity\" class=\"control-label\">Destination City</label>\r\n                    <select id=\"DestinationCity\" name=\"DestinationCity\" class=\"form-control\" onchange=\"updateCitiesOptions('DestinationCity', 'DepartureCity')\">\r\n                        <option disabled selected>Select Destination City</option>\r\n                        @foreach (var city in Enum.GetValues(typeof(TravelAgencyWeb.Utils.Enumerations.Cities)))\r\n                        {\r\n                        <option value=\"@city\">@city</option>\r\n                        }\r\n                    </select>\r\n                    <span asp-validation-for=\"DestinationCity\" class=\"text-danger\"></span>\r\n                </div>\r\n\r\n                <div class=\"form-group\">\r\n                    <label asp-for=\"DepartureTime\" class=\"control-label\"></label>\r\n                    <input asp-for=\"DepartureTime\" class=\"form-control\" type=\"date\" value=\"@Model.DepartureTime.Date.ToString(\"yyyy-MM-dd\")\"/>\r\n                    <span asp-validation-for=\"DepartureTime\" class=\"text-danger\"></span>\r\n                </div>\r\n                <div class=\"form-group\">\r\n                    <label asp-for=\"ArrivalTime\" class=\"control-label\"></label>\r\n                    <input asp-for=\"ArrivalTime\" class=\"form-control\" type=\"date\" value=\"@Model.ArrivalTime.Date.ToString(\"yyyy-MM-dd\")\"/>\r\n                    <span asp-validation-for=\"ArrivalTime\" class=\"text-danger\"></span>\r\n                </div>\r\n                <div class=\"form-group\">\r\n                    <label asp-for=\"Price\" class=\"control-label\"></label>\r\n                    <input asp-for=\"Price\" class=\"form-control\" />\r\n                    <span asp-validation-for=\"Price\" class=\"text-danger\"></span>\r\n                </div>\r\n                <div class=\"form-group\">\r\n                    <label asp-for=\"IsAvailable\" class=\"control-label\"></label>\r\n                    <input asp-for=\"IsAvailable\" class=\"form-check-input\" />\r\n                    <span asp-validation-for=\"IsAvailable\" class=\"text-danger\"></span>\r\n                </div>\r\n                <div class=\"form-group\">\r\n                    <label asp-for=\"ImageUrl\" class=\"control-label\"></label>\r\n                    <input asp-for=\"ImageUrl\" class=\"form-control\" />\r\n                    <span asp-validation-for=\"ImageUrl\" class=\"text-danger\"></span>\r\n                </div>\r\n                <div class=\"form-group mb-2\">\r\n                    <label asp-for=\"Description\" class=\"control-label\"></label>\r\n                    <textarea asp-for=\"Description\" class=\"form-control\" rows=\"4\"></textarea>\r\n                    <span asp-validation-for=\"Description\" class=\"text-danger\"></span>\r\n                </div>\r\n                <div class=\"form-group div-button\">\r\n                    <button type=\"submit\" class=\"btn btn-primary\">Add</button>\r\n                </div>\r\n            </form>\r\n        </div>\r\n    }\r\n    else\r\n    {\r\n        <p>You do not have permission to access this page.</p>\r\n    }\r\n}\r\n\r\n</body>\r\n</html>\r\n
+===================================================================
+diff --git a/TravelAgency/Views/Admin/AddFlight.cshtml b/TravelAgency/Views/Admin/AddFlight.cshtml
+--- a/TravelAgency/Views/Admin/AddFlight.cshtml	
++++ b/TravelAgency/Views/Admin/AddFlight.cshtml	
+@@ -1,11 +1,12 @@
+ @using Microsoft.AspNetCore.Identity
+ @using TravelAgency.Models.UserRelated
++@using TravelAgency.Utils.Enumerations
+ @inject UserManager<AccountModel> UserManager
+ @{
+     ViewData["Title"] = "Add Flight";
+ }
+ 
+-@model FlightModel
++@model TravelAgency.Models.FlightModel
+ 
+ <!DOCTYPE html>
+ <html lang="en">
+@@ -20,7 +21,7 @@
+ @{
+     var currentUser = await UserManager.GetUserAsync(User);
+ 
+-    if (currentUser!.Role == TravelAgencyWeb.Utils.Enumerations.UserRole.Admin)
++    if (currentUser!.Role == UserRole.Admin)
+     {
+ 
+         <div class="container-add-flight">
+@@ -31,7 +32,7 @@
+                     <label for="DepartureCity" class="control-label">Departure City</label>
+                     <select id="DepartureCity" name="DepartureCity" class="form-control" onchange="updateCitiesOptions('DepartureCity', 'ArrivalCity')">
+                         <option disabled selected>Select Departure City</option>
+-                        @foreach (var city in Enum.GetValues(typeof(TravelAgencyWeb.Utils.Enumerations.Cities)))
++                        @foreach (var city in Enum.GetValues(typeof(Cities)))
+                         {
+                         <option value="@city">@city</option>
+                         }
+@@ -43,7 +44,7 @@
+                     <label for="DestinationCity" class="control-label">Destination City</label>
+                     <select id="DestinationCity" name="DestinationCity" class="form-control" onchange="updateCitiesOptions('DestinationCity', 'DepartureCity')">
+                         <option disabled selected>Select Destination City</option>
+-                        @foreach (var city in Enum.GetValues(typeof(TravelAgencyWeb.Utils.Enumerations.Cities)))
++                        @foreach (var city in Enum.GetValues(typeof(Cities)))
+                         {
+                         <option value="@city">@city</option>
+                         }
+Index: TravelAgency.sln
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\r\nMicrosoft Visual Studio Solution File, Format Version 12.00\r\nProject(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"TravelAgency\", \"TravelAgency\\TravelAgency.csproj\", \"{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}\"\r\nEndProject\r\nGlobal\r\n\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\r\n\t\tDebug|Any CPU = Debug|Any CPU\r\n\t\tRelease|Any CPU = Release|Any CPU\r\n\tEndGlobalSection\r\n\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\r\n\t\t{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\r\n\t\t{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}.Debug|Any CPU.Build.0 = Debug|Any CPU\r\n\t\t{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}.Release|Any CPU.ActiveCfg = Release|Any CPU\r\n\t\t{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}.Release|Any CPU.Build.0 = Release|Any CPU\r\n\tEndGlobalSection\r\nEndGlobal\r\n
+===================================================================
+diff --git a/TravelAgency.sln b/TravelAgency.sln
+--- a/TravelAgency.sln	
++++ b/TravelAgency.sln	
+@@ -2,6 +2,8 @@
+ Microsoft Visual Studio Solution File, Format Version 12.00
+ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelAgency", "TravelAgency\TravelAgency.csproj", "{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}"
+ EndProject
++Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelAgencyTests", "TravelAgencyTests\TravelAgencyTests.csproj", "{5BEF547A-A331-4BD1-B581-FDBE8ACDFC07}"
++EndProject
+ Global
+ 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+ 		Debug|Any CPU = Debug|Any CPU
+@@ -12,5 +14,9 @@
+ 		{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+ 		{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+ 		{5DF573B4-EF45-4024-A7CF-674CCAAA1B49}.Release|Any CPU.Build.0 = Release|Any CPU
++		{5BEF547A-A331-4BD1-B581-FDBE8ACDFC07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
++		{5BEF547A-A331-4BD1-B581-FDBE8ACDFC07}.Debug|Any CPU.Build.0 = Debug|Any CPU
++		{5BEF547A-A331-4BD1-B581-FDBE8ACDFC07}.Release|Any CPU.ActiveCfg = Release|Any CPU
++		{5BEF547A-A331-4BD1-B581-FDBE8ACDFC07}.Release|Any CPU.Build.0 = Release|Any CPU
+ 	EndGlobalSection
+ EndGlobal
+Index: TravelAgency/Views/Admin/AddUser.cshtml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@using Microsoft.AspNetCore.Mvc.TagHelpers\r\n@using TravelAgencyWeb.Utils.Enumerations\r\n@model TravelAgency.Models.UserRelated.AddUserModel\r\n\r\n<link rel=\"stylesheet\" href=\"~/css/add-user.css\" asp-append-version=\"true\"/>\r\n\r\n<div class=\"container-add-user\">\r\n    <h2>Add User</h2>\r\n\r\n    <form asp-controller=\"Admin\" asp-action=\"AddUser\" method=\"post\" class=\"form-horizontal\" role=\"form\">\r\n        <div asp-validation-summary=\"ModelOnly\" class=\"text-danger\"></div>\r\n        <div class=\"form-group\">\r\n            <label asp-for=\"FirstName\" class=\"control-label\"></label>\r\n            <input asp-for=\"FirstName\" class=\"form-control\" />\r\n            <span asp-validation-for=\"FirstName\" class=\"text-danger\"></span>\r\n        </div>\r\n        <div class=\"form-group\">\r\n            <label asp-for=\"LastName\" class=\"control-label\"></label>\r\n            <input asp-for=\"LastName\" class=\"form-control\" />\r\n            <span asp-validation-for=\"LastName\" class=\"text-danger\"></span>\r\n        </div>\r\n        <div class=\"form-group\">\r\n            <label asp-for=\"Email\" class=\"control-label\"></label>\r\n            <input asp-for=\"Email\" class=\"form-control\" />\r\n            <span asp-validation-for=\"Email\" class=\"text-danger\"></span>\r\n        </div>\r\n        <div class=\"form-group\">\r\n            <label asp-for=\"Phone\" class=\"control-label\"></label>\r\n            <input asp-for=\"Phone\" class=\"form-control\" />\r\n            <span asp-validation-for=\"Phone\" class=\"text-danger\"></span>\r\n        </div>\r\n        <div class=\"form-group mb-2\">\r\n            <label>Місто</label>\r\n            <select asp-for=\"Role\" class=\"form-control\">\r\n                <option disabled selected>@Model.Role</option>\r\n                @foreach (UserRole role in Enum.GetValues(typeof(UserRole)))\r\n                {\r\n                    <option value=\"@role\">@role</option>\r\n                }\r\n            </select>\r\n        </div>\r\n    \r\n        <div class=\"form-group div-button\">\r\n            <button type=\"submit\" class=\"btn btn-primary\">Add</button>\r\n        </div>\r\n    </form>\r\n</div>
+===================================================================
+diff --git a/TravelAgency/Views/Admin/AddUser.cshtml b/TravelAgency/Views/Admin/AddUser.cshtml
+--- a/TravelAgency/Views/Admin/AddUser.cshtml	
++++ b/TravelAgency/Views/Admin/AddUser.cshtml	
+@@ -1,5 +1,5 @@
+ @using Microsoft.AspNetCore.Mvc.TagHelpers
+-@using TravelAgencyWeb.Utils.Enumerations
++@using TravelAgency.Utils.Enumerations
+ @model TravelAgency.Models.UserRelated.AddUserModel
+ 
+ <link rel="stylesheet" href="~/css/add-user.css" asp-append-version="true"/>
+@@ -30,7 +30,7 @@
+             <span asp-validation-for="Phone" class="text-danger"></span>
+         </div>
+         <div class="form-group mb-2">
+-            <label>Місто</label>
++            <label>Role</label>
+             <select asp-for="Role" class="form-control">
+                 <option disabled selected>@Model.Role</option>
+                 @foreach (UserRole role in Enum.GetValues(typeof(UserRole)))
+@@ -39,7 +39,11 @@
+                 }
+             </select>
+         </div>
+-    
++        <div class="form-group mb-2">
++            <label asp-for="Password" class="control-label"></label>
++            <input asp-for="Password" class="form-control" />
++            <span asp-validation-for="Password" class="text-danger"></span>
++        </div>
+         <div class="form-group div-button">
+             <button type="submit" class="btn btn-primary">Add</button>
+         </div>
+Index: TravelAgency/Views/Admin/AdminPanel.cshtml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@using Microsoft.AspNetCore.Identity\r\n@using TravelAgency.Models.UserRelated\r\n@inject SignInManager<AccountModel> SignInManager\r\n@inject UserManager<AccountModel> UserManager\r\n@model TravelAgency.Models.Admin.AdminPanelViewModel\r\n\r\n@{\r\nvar currentUser = await UserManager.GetUserAsync(User);\r\n\r\nif (currentUser!.Role == TravelAgencyWeb.Utils.Enumerations.UserRole.Admin)\r\n{\r\n<link rel=\"stylesheet\" href=\"~/css/admin-panel.css\" />\r\n    \r\n<div class=\"container\">\r\n    <div class=\"row\">\r\n        <div class=\"col-md-2 offset-md-2\">\r\n            <div class=\"nav-links\">\r\n                <div class=\"mb-2\">\r\n                    <a class=\"btn btn-primary\" asp-controller=\"Account\" asp-action=\"ViewProfile\">Profile</a>\r\n                </div>\r\n                <div class=\"mb-2\">\r\n                    <a class=\"btn btn-primary\" asp-controller=\"Account\" asp-action=\"ChangePassword\">Change Password</a>\r\n                </div>\r\n                <div class=\"mb-2\">\r\n                    <a class=\"btn btn-primary\" asp-controller=\"Admin\" asp-action=\"AdminPanel\">Admin Panel</a>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <div class=\"col-md-6\">\r\n            <h2>Admin Panel</h2>\r\n            <ul class=\"nav nav-tabs\" id=\"myTab\" role=\"tablist\">\r\n                <li class=\"nav-item\">\r\n                    <a class=\"nav-link active\" id=\"users-tab\" data-toggle=\"tab\" href=\"#users\" role=\"tab\" aria-controls=\"users\" aria-selected=\"true\">Users</a>\r\n                </li>\r\n                <li class=\"nav-item\">\r\n                    <a class=\"nav-link\" id=\"flights-tab\" data-toggle=\"tab\" href=\"#flights\" role=\"tab\" aria-controls=\"flights\" aria-selected=\"false\">Flights</a>\r\n                </li>\r\n            </ul>\r\n            <div class=\"tab-content\" id=\"myTabContent\">\r\n                <div class=\"tab-pane fade show active\" id=\"users\" role=\"tabpanel\" aria-labelledby=\"users-tab\">\r\n                    <h3>User Management</h3>\r\n                    <table class=\"table\">\r\n                        <thead>\r\n                        <tr>\r\n                            <th>First Name</th>\r\n                            <th>Last Name</th>\r\n                            <th>Email</th>\r\n                            <th>Phone</th>\r\n                            <th>Role</th>\r\n                        </tr>\r\n                        </thead>\r\n                        <tbody>\r\n                        @foreach (var user in Model.AccModels)\r\n                        {\r\n                        <tr data-userid=\"@user.Id\">\r\n                            <td><span class=\"editableUser\" data-field=\"Name\">@user.FirstName</span></td>\r\n                            <td><span class=\"editableUser\" data-field=\"Name\">@user.LastName</span></td>\r\n                            <td><span class=\"editableUser\" data-field=\"Email\">@user.Email</span></td>\r\n                            <td><span class=\"editableUser\" data-field=\"PhoneNumber\">@user.PhoneNumber</span></td>\r\n                            <td><span class=\"editableUser\" data-field=\"Role\">@user.Role</span></td>\r\n                        </tr>\r\n                        }\r\n                        </tbody>\r\n                    </table>\r\n                    <a asp-controller=\"Admin\" asp-action=\"AddUser\">Add new user</a>\r\n                </div>\r\n                <div class=\"tab-pane fade\" id=\"flights\" role=\"tabpanel\" aria-labelledby=\"flights-tab\">\r\n                    <h3>Flight Management</h3>\r\n                    <table class=\"table\">\r\n                        <thead>\r\n                        <tr>\r\n                            <th>Id</th>\r\n                            <th>Departure City</th>\r\n                            <th>Destination City</th>\r\n                            <th>Departure Time</th>\r\n                            <th>Arrival Time</th>\r\n                            <th>Price</th>\r\n                            <th>Is Available</th>\r\n                            <th>Image URL</th>\r\n                            <th>Description</th>\r\n                        </tr>\r\n                        </thead>\r\n                        <tbody>\r\n                        @foreach (var flight in Model.FlightModels)\r\n                        {\r\n                        <tr data-flightId=\"@flight.FlightId\">\r\n                            <td>@flight.FlightId</td>\r\n                            <td><span class=\"editableFlight\" data-field=\"DepartureCity\">@flight.DepartureCity</span></td>\r\n                            <td><span class=\"editableFlight\" data-field=\"DestinationCity\">@flight.DestinationCity</span></td>\r\n                            <td><span class=\"editableFlight\" data-field=\"DepartureTime\">@flight.DepartureTime.ToShortDateString()</span></td>\r\n                            <td><span class=\"editableFlight\" data-field=\"ArrivalTime\">@flight.ArrivalTime.ToShortDateString()</span></td>\r\n                            <td><span class=\"editableFlight\" data-field=\"Price\"><text>$</text>@flight.Price</span></td>\r\n                            <td><span class=\"editableFlight\" data-field=\"IsAvailable\">@(flight.IsAvailable ? \"Yes\" : \"No\")</span></td>\r\n                            <td><span class=\"editableFlight\" data-field=\"ImageUrl\">@flight.ImageUrl</span></td>\r\n                            <td>\r\n                                <span class=\"editableFlight\" data-field=\"Description\">\r\n                                    <span class=\"details\" data-toggle=\"tooltip\" title=\"@flight.Description\">\r\n                                        @if (flight.Description.Length > 30)\r\n                                        {\r\n                                            @flight.Description.Substring(0, 30) <text>...</text>\r\n                                        }\r\n                                        else\r\n                                        {\r\n                                            @flight.Description\r\n                                        }\r\n                                    </span>\r\n                                </span>\r\n                            </td>\r\n                        </tr>\r\n                        }\r\n                        </tbody>\r\n                    </table>\r\n                    <a asp-controller=\"Admin\" asp-action=\"AddFlight\">Add new flight.</a>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n}\r\n}\r\n\r\n@section scripts {\r\n    <script>\r\n        $('#myTab a').on('click', function (e) {\r\n            e.preventDefault();\r\n            $(this).tab('show');\r\n        });\r\n    </script>\r\n}
+===================================================================
+diff --git a/TravelAgency/Views/Admin/AdminPanel.cshtml b/TravelAgency/Views/Admin/AdminPanel.cshtml
+--- a/TravelAgency/Views/Admin/AdminPanel.cshtml	
++++ b/TravelAgency/Views/Admin/AdminPanel.cshtml	
+@@ -1,5 +1,6 @@
+ @using Microsoft.AspNetCore.Identity
+ @using TravelAgency.Models.UserRelated
++@using TravelAgency.Utils.Enumerations
+ @inject SignInManager<AccountModel> SignInManager
+ @inject UserManager<AccountModel> UserManager
+ @model TravelAgency.Models.Admin.AdminPanelViewModel
+@@ -7,7 +8,7 @@
+ @{
+ var currentUser = await UserManager.GetUserAsync(User);
+ 
+-if (currentUser!.Role == TravelAgencyWeb.Utils.Enumerations.UserRole.Admin)
++if (currentUser!.Role == UserRole.Admin)
+ {
+ <link rel="stylesheet" href="~/css/admin-panel.css" />
+     
+@@ -20,6 +21,9 @@
+                 </div>
+                 <div class="mb-2">
+                     <a class="btn btn-primary" asp-controller="Account" asp-action="ChangePassword">Change Password</a>
++                </div>
++                <div class="mb-2">
++                    <a class="btn btn-primary" asp-controller="Account" asp-action="ViewBookings">Bookings</a>
+                 </div>
+                 <div class="mb-2">
+                     <a class="btn btn-primary" asp-controller="Admin" asp-action="AdminPanel">Admin Panel</a>
+Index: TravelAgency/obj/Debug/net8.0/TravelAgency.AssemblyInfo.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>//------------------------------------------------------------------------------\r\n// <auto-generated>\r\n//     This code was generated by a tool.\r\n//\r\n//     Changes to this file may cause incorrect behavior and will be lost if\r\n//     the code is regenerated.\r\n// </auto-generated>\r\n//------------------------------------------------------------------------------\r\n\r\nusing System;\r\nusing System.Reflection;\r\n\r\n[assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute(\"Bootstrap5\")]\r\n[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute(\"aspnet-TravelAgency-FAA0A050-B296-4AB4-8EEA-8FEA4426551A\")]\r\n[assembly: System.Reflection.AssemblyCompanyAttribute(\"TravelAgency\")]\r\n[assembly: System.Reflection.AssemblyConfigurationAttribute(\"Debug\")]\r\n[assembly: System.Reflection.AssemblyFileVersionAttribute(\"1.0.0.0\")]\r\n[assembly: System.Reflection.AssemblyInformationalVersionAttribute(\"1.0.0+09badeb21fb4c8e453e40d5bcdbdb4114e618793\")]\r\n[assembly: System.Reflection.AssemblyProductAttribute(\"TravelAgency\")]\r\n[assembly: System.Reflection.AssemblyTitleAttribute(\"TravelAgency\")]\r\n[assembly: System.Reflection.AssemblyVersionAttribute(\"1.0.0.0\")]\r\n\r\n// Generated by the MSBuild WriteCodeFragment class.\r\n\r\n
+===================================================================
+diff --git a/TravelAgency/obj/Debug/net8.0/TravelAgency.AssemblyInfo.cs b/TravelAgency/obj/Debug/net8.0/TravelAgency.AssemblyInfo.cs
+--- a/TravelAgency/obj/Debug/net8.0/TravelAgency.AssemblyInfo.cs	
++++ b/TravelAgency/obj/Debug/net8.0/TravelAgency.AssemblyInfo.cs	
+@@ -15,7 +15,7 @@
+ [assembly: System.Reflection.AssemblyCompanyAttribute("TravelAgency")]
+ [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+ [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+09badeb21fb4c8e453e40d5bcdbdb4114e618793")]
++[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+11bac2183a638087590645e7e662b20720e5f747")]
+ [assembly: System.Reflection.AssemblyProductAttribute("TravelAgency")]
+ [assembly: System.Reflection.AssemblyTitleAttribute("TravelAgency")]
+ [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
